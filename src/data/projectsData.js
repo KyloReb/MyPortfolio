@@ -40,5 +40,19 @@ export const projects = [
       image: '/assets/images/EPocket.png',
       github: 'https://github.com/yourusername/weather-app',
       tags: ['C#', 'Visual Studio', 'Windows Form', 'MSSQL']
+    },
+    {
+      title: 'Inventory Management System',
+      description: 'A comprehensive Windows Forms application for managing supplies and assets inventory, built with C# (.NET Framework 4.7.2). Provides a complete interface for viewing, editing, searching, and exporting inventory data with user roles, activity logging, SQL Server connectivity, and advanced export capabilities.',
+      image: '/assets/images/InventoryManagementSys.png',
+      github: 'https://github.com/KyloReb/InventorySystem',
+      tags: ['C#', '.NET Framework 4.7.2', 'Windows Forms', 'SQL Server', 'Entity Framework']
+    },
+    {
+      title: 'SLA Management System',
+      description: 'A web application built with ASP.NET Framework 4.7.2 for managing Service Level Agreements (SLAs). Features include user authentication, complete CRUD operations, graphical transaction displays, and customizable SLA parameters for comprehensive service agreement management.',
+      image: '/assets/images/SLAManagement.jpg',
+      github: 'https://github.com/KyloReb/SLA',
+      tags: ['ASP.NET', 'C#', '.NET Framework 4.7.2', 'MSSQL', 'Entity Framework', 'JavaScript', 'Chart.js', 'Bootstrap']
     }
   ];
