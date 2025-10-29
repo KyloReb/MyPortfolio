@@ -66,7 +66,7 @@ const Contact = () => {
   }, [formData, isSubmitting, showNotification]);
 
   const handleViewResume = useCallback(() => {
-    window.open(`${process.env.PUBLIC_URL}/assets/resume.pdf`, '_blank', 'noopener,noreferrer');
+    window.open(`${process.env.PUBLIC_URL}/assets/Resume.pdf`, '_blank', 'noopener,noreferrer');
   }, []);
 
   const copyToClipboard = useCallback(async (text, type) => {
