@@ -1,4 +1,4 @@
-// Projects.js
+// Projects.js - Refactored with improved image handling
 import React, { useState, useEffect, useCallback } from 'react';
 import { projects } from '../../data/projectsData';
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
@@ -11,11 +11,12 @@ const Projects = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [expandedDescriptions, setExpandedDescriptions] = useState({});
 
-  // Calculate total slides based on 4 projects per slide (2x2 grid)
   const projectsPerSlide = 4;
   const totalSlides = Math.ceil(projects.length / projectsPerSlide);
 
-  // Toggle description expansion
+  // Fallback placeholder - ensure this path is correct in your public folder
+  const PLACEHOLDER_IMAGE = `${process.env.PUBLIC_URL}/assets/images/project-placeholder.png`;
+
   const toggleDescription = (projectId, event) => {
     event.stopPropagation();
     setExpandedDescriptions(prev => ({
@@ -28,24 +29,45 @@ const Projects = () => {
     setLoadedImages(prev => ({ ...prev, [projectIndex]: true }));
   };
 
-  const handleImageError = (projectIndex) => {
+  const handleImageError = (projectIndex, project) => {
+    console.error(`Failed to load image for project: ${project.title}`, project.image);
     setImageErrors(prev => ({ ...prev, [projectIndex]: true }));
   };
 
   const getImageSource = (project, index) => {
     if (imageErrors[index]) {
-      return '/images/project-placeholder.png';
+      return PLACEHOLDER_IMAGE;
     }
-    return project.image;
+    
+    // Handle both relative and absolute paths
+    if (project.image) {
+      // If image already has PUBLIC_URL prefix, use as-is
+      if (project.image.includes('http') || project.image.includes(process.env.PUBLIC_URL)) {
+        return project.image;
+      }
+      // If starts with /, it's relative to public folder
+      if (project.image.startsWith('/')) {
+        return `${process.env.PUBLIC_URL}${project.image}`;
+      }
+      // Otherwise, assume it's from public root
+      return `${process.env.PUBLIC_URL}/${project.image}`;
+    }
+    
+    return PLACEHOLDER_IMAGE;
   };
 
   const openProjectLink = (project, event) => {
+    // Don't navigate if clicking on interactive elements
     if (event.target.closest('.project-tag') || 
         event.target.closest('.project-links') ||
         event.target.closest('.see-more-btn')) {
       return;
     }
-    window.open(project.github || project.live, '_blank');
+    
+    const url = project.live || project.github;
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
   };
 
   const nextSlide = useCallback(() => {
@@ -60,20 +82,19 @@ const Projects = () => {
     setCurrentSlide(slideIndex);
   };
 
-  // Calculate consistent heights for all cards across all slides
   const calculateAndApplyConsistentHeights = useCallback(() => {
     const allCards = document.querySelectorAll('.project-card-equal');
     if (allCards.length === 0) return;
 
-    // Reset all heights to auto to get natural heights
+    // Reset heights
     allCards.forEach(card => {
       card.style.height = 'auto';
     });
 
-    // Force a reflow
+    // Force reflow
     void document.body.offsetHeight;
 
-    // Find the maximum height among all cards
+    // Get max height
     let maxHeight = 0;
     allCards.forEach(card => {
       const height = card.offsetHeight;
@@ -82,13 +103,15 @@ const Projects = () => {
       }
     });
 
-    // Apply the maximum height to all cards
-    allCards.forEach(card => {
-      card.style.height = `${maxHeight}px`;
-    });
+    // Apply max height to all cards
+    if (maxHeight > 0) {
+      allCards.forEach(card => {
+        card.style.height = `${maxHeight}px`;
+      });
+    }
   }, []);
 
-  // Recalculate heights when slide changes or descriptions expand/collapse
+  // Recalculate heights on slide change or description toggle
   useEffect(() => {
     const timer = setTimeout(calculateAndApplyConsistentHeights, 100);
     return () => clearTimeout(timer);
@@ -96,11 +119,15 @@ const Projects = () => {
 
   // Recalculate on window resize
   useEffect(() => {
-    window.addEventListener('resize', calculateAndApplyConsistentHeights);
-    return () => window.removeEventListener('resize', calculateAndApplyConsistentHeights);
+    const handleResize = () => {
+      calculateAndApplyConsistentHeights();
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [calculateAndApplyConsistentHeights]);
 
-  // Auto-advance slides (optional)
+  // Auto-advance slides
   useEffect(() => {
     if (!projectsInView || totalSlides <= 1) return;
     
@@ -136,9 +163,8 @@ const Projects = () => {
       <div className="projects-container">
         <h2 className="section-title">My Projects</h2>
         
-        {/* Slider Container */}
         <div className="projects-slider-container">
-          {/* Navigation Arrows - Only show if there are multiple slides */}
+          {/* Navigation Arrows */}
           {totalSlides > 1 && (
             <>
               <button 
@@ -187,7 +213,7 @@ const Projects = () => {
                       )
                       .map((project, index) => {
                         const globalIndex = slideIndex * projectsPerSlide + index;
-                        const projectId = project.id || globalIndex;
+                        const projectId = project.id || `project-${globalIndex}`;
                         const isExpanded = expandedDescriptions[projectId];
                         const needsSeeMore = project.description.length > 120;
                         const displayDescription = isExpanded 
@@ -201,6 +227,8 @@ const Projects = () => {
                             style={{ animationDelay: `${index * 0.15}s` }}
                             onClick={(e) => openProjectLink(project, e)}
                             data-project-id={projectId}
+                            role="article"
+                            aria-label={`${project.title} project card`}
                           >
                             <div className="project-image-container-equal">
                               <div className="project-image-equal">
@@ -213,7 +241,7 @@ const Projects = () => {
                                   src={getImageSource(project, globalIndex)}
                                   alt={`${project.title} - Project Screenshot`}
                                   onLoad={() => handleImageLoad(globalIndex)}
-                                  onError={() => handleImageError(globalIndex)}
+                                  onError={() => handleImageError(globalIndex, project)}
                                   className={`${
                                     loadedImages[globalIndex] ? 'loaded' : 'loading'
                                   } ${
@@ -226,7 +254,10 @@ const Projects = () => {
                                     {project.github && (
                                       <button 
                                         className="project-link-btn"
-                                        onClick={() => window.open(project.github, '_blank')}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          window.open(project.github, '_blank', 'noopener,noreferrer');
+                                        }}
                                         aria-label={`View ${project.title} code on GitHub`}
                                       >
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -238,7 +269,10 @@ const Projects = () => {
                                     {project.live && (
                                       <button 
                                         className="project-link-btn live-demo"
-                                        onClick={() => window.open(project.live, '_blank')}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          window.open(project.live, '_blank', 'noopener,noreferrer');
+                                        }}
                                         aria-label={`View ${project.title} live demo`}
                                       >
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
