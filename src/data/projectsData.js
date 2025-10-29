@@ -62,11 +62,27 @@ export const projects = [
     tags: ['C#', '.NET Framework 4.7.2', 'Windows Forms', 'SQL Server', 'Entity Framework']
   },
   {
+    id: 'report-generator',
+    title: 'Report Generator System',
+    description: 'Report Generator System is a Windows Forms application built in C# using the .NET Framework 4.7.2, designed for generating and viewing transactional reports. It integrates Crystal Reports for rendering and supports multiple report types such as QR, POS, and ATM. The application features a user-friendly interface with a resizable split-panel layout (25% controls, 75% report view), dynamic zoom controls, and user session management. It connects to an MSSQL database using configuration-based connection strings and allows filtering by date range, report type, and terminal ID. The system includes progress tracking, error logging, and a streamlined menu with user options like logout and password change.',
+    image: `${BASE_URL}/assets/images/ReportGeneratingSystem.png`,
+    github: 'https://github.com/KyloReb/SLA',
+    tags: ['Windows Form', 'C#', '.NET Framework 4.7.2', 'MSSQL', 'Crystal Report']
+  },
+  {
+    id: 'sla-api',
+    title: 'SLA Management Api',
+    description: 'A web application built with ASP.NET Framework 4.7.2 for managing Service Level Agreements (SLAs). Features include user authentication, complete CRUD operations, graphical transaction displays, and customizable SLA parameters for comprehensive service agreement management.',
+    image: `${BASE_URL}/assets/images/SlaApi.png`,
+    github: 'https://github.com/KyloReb/SLA',
+    tags: ['ASP.NET','ASP.NET Web Core Api', 'C#', '.NET Framework 4.7.2', 'MSSQL', 'Entity Framework', 'JavaScript', 'Chart.js', 'Bootstrap']
+  },
+  {
     id: 'sla-mgmt',
     title: 'SLA Management System',
     description: 'A web application built with ASP.NET Framework 4.7.2 for managing Service Level Agreements (SLAs). Features include user authentication, complete CRUD operations, graphical transaction displays, and customizable SLA parameters for comprehensive service agreement management.',
-    image: `${BASE_URL}/assets/images/SLAManagement.jpg`,
+    image: `${BASE_URL}/assets/images/Sla.png`,
     github: 'https://github.com/KyloReb/SLA',
-    tags: ['ASP.NET', 'C#', '.NET Framework 4.7.2', 'MSSQL', 'Entity Framework', 'JavaScript', 'Chart.js', 'Bootstrap']
+    tags: ['ASP.NET','ASP.NET Web Core Api','C#', '.NET Framework 4.7.2', 'MSSQL', 'Entity Framework', 'JavaScript', 'Chart.js', 'Bootstrap']
   }
 ];

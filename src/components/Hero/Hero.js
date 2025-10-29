@@ -41,12 +41,13 @@ const Hero = ({ darkMode, toggleDarkMode }) => {
         </div>
       </div>
 
+      {/* Scroll indicator without background container */}
       <div className="scroll-indicator">
         <button 
           onClick={() => scrollToSection('skills')}
           className="scroll-button"
+          aria-label="Scroll to explore more content"
         >
-          <span>Scroll to explore</span>
           <div className="scroll-arrow">↓</div>
         </button>
       </div>
