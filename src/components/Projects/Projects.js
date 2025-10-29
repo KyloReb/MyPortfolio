@@ -1,4 +1,4 @@
-// Projects.js - Refactored with improved image handling
+// Projects.js - Refactored with comprehensive image fallback handling
 import React, { useState, useEffect, useCallback } from 'react';
 import { projects } from '../../data/projectsData';
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
@@ -14,8 +14,20 @@ const Projects = () => {
   const projectsPerSlide = 4;
   const totalSlides = Math.ceil(projects.length / projectsPerSlide);
 
-  // Fallback placeholder - ensure this path is correct in your public folder
+  // Multiple fallback strategies
+  const FALLBACK_IMAGES = {
+    kinderpal: `${process.env.PUBLIC_URL}/assets/images/KinderPal.png`,
+    ictowers: `${process.env.PUBLIC_URL}/assets/images/ICTowers.jpg`,
+    spaceAttack: `${process.env.PUBLIC_URL}/assets/images/SpaceAttack.png`,
+    posUdm: `${process.env.PUBLIC_URL}/assets/images/PointOfSales.jpg`,
+    visitorTracker: `${process.env.PUBLIC_URL}/assets/images/VisitorTracker.jpg`,
+    ePocket: `${process.env.PUBLIC_URL}/assets/images/EPocket.png`,
+    inventoryMgmt: `${process.env.PUBLIC_URL}/assets/images/InventoryManagementSys.png`,
+    slaMgmt: `${process.env.PUBLIC_URL}/assets/images/SLAManagement.jpg`
+  };
+
   const PLACEHOLDER_IMAGE = `${process.env.PUBLIC_URL}/assets/images/project-placeholder.png`;
+  const GENERIC_PLACEHOLDER = 'https://via.placeholder.com/400x250/007bff/ffffff?text=Project+Image';
 
   const toggleDescription = (projectId, event) => {
     event.stopPropagation();
@@ -26,38 +38,90 @@ const Projects = () => {
   };
 
   const handleImageLoad = (projectIndex) => {
+    console.log(`Image loaded successfully for project index: ${projectIndex}`);
     setLoadedImages(prev => ({ ...prev, [projectIndex]: true }));
   };
 
-  const handleImageError = (projectIndex, project) => {
-    console.error(`Failed to load image for project: ${project.title}`, project.image);
-    setImageErrors(prev => ({ ...prev, [projectIndex]: true }));
+  const handleImageError = (projectIndex, project, attempt = 1) => {
+    console.warn(`Image load attempt ${attempt} failed for: ${project.title}`);
+    console.warn(`Attempted source: ${getImageSource(project, projectIndex, attempt)}`);
+    
+    if (attempt < 3) {
+      // Retry with different strategy
+      setTimeout(() => {
+        const img = new Image();
+        img.onload = () => handleImageLoad(projectIndex);
+        img.onerror = () => handleImageError(projectIndex, project, attempt + 1);
+        img.src = getImageSource(project, projectIndex, attempt + 1);
+      }, 500);
+    } else {
+      // Final failure
+      console.error(`All image load attempts failed for: ${project.title}`);
+      setImageErrors(prev => ({ ...prev, [projectIndex]: true }));
+    }
   };
 
-  const getImageSource = (project, index) => {
+  const getImageSource = (project, index, attempt = 1) => {
+    // If we already have an error, use placeholder
     if (imageErrors[index]) {
-      return PLACEHOLDER_IMAGE;
+      return GENERIC_PLACEHOLDER;
+    }
+
+    const projectId = project.id?.toLowerCase();
+    
+    // Strategy 1: Try specific fallback based on project ID
+    if (attempt === 1 && projectId && FALLBACK_IMAGES[projectId]) {
+      return FALLBACK_IMAGES[projectId];
     }
     
-    // Handle both relative and absolute paths
-    if (project.image) {
-      // If image already has PUBLIC_URL prefix, use as-is
-      if (project.image.includes('http') || project.image.includes(process.env.PUBLIC_URL)) {
+    // Strategy 2: Try the original image path with absolute URL for GitHub Pages
+    if (attempt <= 2 && project.image) {
+      // Handle absolute URLs (http/https)
+      if (project.image.startsWith('http')) {
         return project.image;
       }
-      // If starts with /, it's relative to public folder
+      
+      // Handle relative paths for GitHub Pages
       if (project.image.startsWith('/')) {
-        return `${process.env.PUBLIC_URL}${project.image}`;
+        // For GitHub Pages, we need to ensure the path is absolute from the repo root
+        const baseUrl = process.env.NODE_ENV === 'production' 
+          ? 'https://kyloreb.github.io/MyPortfolio'
+          : process.env.PUBLIC_URL;
+        
+        return `${baseUrl}${project.image}`;
       }
-      // Otherwise, assume it's from public root
-      return `${process.env.PUBLIC_URL}/${project.image}`;
+      
+      // Handle relative paths without leading slash
+      const baseUrl = process.env.NODE_ENV === 'production'
+        ? 'https://kyloreb.github.io/MyPortfolio'
+        : process.env.PUBLIC_URL;
+      
+      return `${baseUrl}/${project.image.replace(/^\//, '')}`;
     }
     
-    return PLACEHOLDER_IMAGE;
+    // Strategy 3: Try project-specific fallback
+    if (attempt === 3 && projectId && FALLBACK_IMAGES[projectId]) {
+      return FALLBACK_IMAGES[projectId];
+    }
+    
+    // Final fallback: Generic placeholder
+    return GENERIC_PLACEHOLDER;
   };
 
+  const preloadImages = useCallback(() => {
+    projects.forEach((project, index) => {
+      const img = new Image();
+      img.onload = () => handleImageLoad(index);
+      img.onerror = () => handleImageError(index, project, 1);
+      img.src = getImageSource(project, index, 1);
+    });
+  }, []);
+
+  useEffect(() => {
+    preloadImages();
+  }, [preloadImages]);
+
   const openProjectLink = (project, event) => {
-    // Don't navigate if clicking on interactive elements
     if (event.target.closest('.project-tag') || 
         event.target.closest('.project-links') ||
         event.target.closest('.see-more-btn')) {
@@ -86,15 +150,12 @@ const Projects = () => {
     const allCards = document.querySelectorAll('.project-card-equal');
     if (allCards.length === 0) return;
 
-    // Reset heights
     allCards.forEach(card => {
       card.style.height = 'auto';
     });
 
-    // Force reflow
     void document.body.offsetHeight;
 
-    // Get max height
     let maxHeight = 0;
     allCards.forEach(card => {
       const height = card.offsetHeight;
@@ -103,7 +164,6 @@ const Projects = () => {
       }
     });
 
-    // Apply max height to all cards
     if (maxHeight > 0) {
       allCards.forEach(card => {
         card.style.height = `${maxHeight}px`;
@@ -111,13 +171,11 @@ const Projects = () => {
     }
   }, []);
 
-  // Recalculate heights on slide change or description toggle
   useEffect(() => {
     const timer = setTimeout(calculateAndApplyConsistentHeights, 100);
     return () => clearTimeout(timer);
   }, [currentSlide, expandedDescriptions, calculateAndApplyConsistentHeights]);
 
-  // Recalculate on window resize
   useEffect(() => {
     const handleResize = () => {
       calculateAndApplyConsistentHeights();
@@ -127,7 +185,6 @@ const Projects = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [calculateAndApplyConsistentHeights]);
 
-  // Auto-advance slides
   useEffect(() => {
     if (!projectsInView || totalSlides <= 1) return;
     
@@ -138,7 +195,6 @@ const Projects = () => {
     return () => clearInterval(interval);
   }, [projectsInView, nextSlide, totalSlides]);
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!projectsInView || totalSlides <= 1) return;
@@ -164,7 +220,6 @@ const Projects = () => {
         <h2 className="section-title">My Projects</h2>
         
         <div className="projects-slider-container">
-          {/* Navigation Arrows */}
           {totalSlides > 1 && (
             <>
               <button 
@@ -191,7 +246,6 @@ const Projects = () => {
             </>
           )}
 
-          {/* Slides */}
           <div className="projects-slider-wrapper">
             <div 
               className="projects-slider-track"
@@ -235,13 +289,22 @@ const Projects = () => {
                                 {!loadedImages[globalIndex] && !imageErrors[globalIndex] && (
                                   <div className="image-skeleton">
                                     <div className="skeleton-loader"></div>
+                                    <div style={{ 
+                                      position: 'absolute', 
+                                      bottom: '10px', 
+                                      fontSize: '12px',
+                                      color: 'var(--text-color)',
+                                      opacity: 0.7
+                                    }}>
+                                      Loading image...
+                                    </div>
                                   </div>
                                 )}
                                 <img 
-                                  src={getImageSource(project, globalIndex)}
+                                  src={getImageSource(project, globalIndex, 1)}
                                   alt={`${project.title} - Project Screenshot`}
                                   onLoad={() => handleImageLoad(globalIndex)}
-                                  onError={() => handleImageError(globalIndex, project)}
+                                  onError={() => handleImageError(globalIndex, project, 1)}
                                   className={`${
                                     loadedImages[globalIndex] ? 'loaded' : 'loading'
                                   } ${
@@ -329,7 +392,6 @@ const Projects = () => {
             </div>
           </div>
 
-          {/* Slide Indicators */}
           {totalSlides > 1 && (
             <div className="slider-indicators">
               {Array.from({ length: totalSlides }).map((_, index) => (
