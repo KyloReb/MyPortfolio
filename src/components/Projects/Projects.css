@@ -1,4 +1,4 @@
-/* Projects.css */
+/* Projects.css - Optimized for better height management */
 .projects-section {
   padding: 80px 0;
   background: var(--bg-color);
@@ -142,7 +142,7 @@
   transform: scale(1.1);
 }
 
-/* 2x2 Projects Grid with Equal Height - FIXED */
+/* 2x2 Projects Grid with Optimized Height Management */
 .projects-grid-2x2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -151,7 +151,7 @@
   width: 100%;
   align-items: stretch;
   height: auto;
-  min-height: 900px;
+  min-height: 750px; /* Reduced from 900px */
 }
 
 .project-card-equal {
@@ -169,7 +169,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 450px;
+  min-height: 380px; /* Reduced from 450px */
 }
 
 /* Force equal height for all cards in the grid */
@@ -192,7 +192,7 @@
   width: 100%;
   overflow: hidden;
   flex-shrink: 0;
-  height: 250px;
+  height: 220px; /* Reduced from 250px */
 }
 
 .project-image-equal {
@@ -329,6 +329,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 200px; /* Added for better content area */
 }
 
 .project-title {
@@ -340,13 +341,14 @@
   flex-shrink: 0;
 }
 
-/* Description Container - IMPROVED */
+/* Description Container - OPTIMIZED */
 .project-description-container {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem; /* Reduced from 1rem */
   position: relative;
+  min-height: 80px; /* Reduced from 96px */
 }
 
 .project-description {
@@ -357,13 +359,13 @@
   margin-bottom: 0.5rem;
   flex: 1;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3; /* Reduced from 4 lines */
   -webkit-box-orient: vertical;
-  line-clamp: 4;
+  line-clamp: 3;
   box-orient: vertical;
   overflow: hidden;
   transition: all 0.3s ease;
-  min-height: 96px;
+  min-height: 72px; /* Reduced from 96px */
   position: relative;
 }
 
@@ -426,7 +428,7 @@
   gap: 0.6rem;
   margin-top: auto;
   flex-shrink: 0;
-  min-height: 40px;
+  min-height: 32px; /* Reduced from 40px */
   align-items: flex-end;
 }
 
@@ -455,14 +457,14 @@
 .projects-grid-2x2 .project-card-equal:nth-child(3) { transition-delay: 0.3s; }
 .projects-grid-2x2 .project-card-equal:nth-child(4) { transition-delay: 0.4s; }
 
-/* Responsive Design */
+/* Responsive Design with Updated Heights */
 @media (max-width: 1400px) {
   .projects-container {
     padding: 0 1.5rem;
   }
   
   .projects-grid-2x2 {
-    min-height: 850px;
+    min-height: 700px; /* Reduced from 850px */
   }
   
   .section-title {
@@ -472,7 +474,7 @@
 
 @media (max-width: 1200px) {
   .projects-grid-2x2 {
-    min-height: 800px;
+    min-height: 650px; /* Reduced from 800px */
   }
   
   .slider-arrow-prev {
@@ -508,7 +510,7 @@
   }
   
   .projects-grid-2x2 {
-    min-height: 750px;
+    min-height: 600px; /* Reduced from 750px */
   }
   
   .section-title {
@@ -521,11 +523,11 @@
     grid-template-columns: 1fr;
     grid-template-rows: repeat(4, 1fr);
     gap: 1.5rem;
-    min-height: 1800px;
+    min-height: 1600px; /* Reduced from 1800px */
   }
   
   .project-image-container-equal {
-    height: 220px;
+    height: 200px; /* Reduced from 220px */
   }
   
   .slider-arrow {
@@ -562,11 +564,11 @@
 
 @media (max-width: 640px) {
   .projects-grid-2x2 {
-    min-height: 1700px;
+    min-height: 1500px; /* Reduced from 1700px */
   }
   
   .project-image-container-equal {
-    height: 200px;
+    height: 180px; /* Reduced from 200px */
   }
   
   .project-title {
@@ -588,12 +590,12 @@
   }
   
   .projects-grid-2x2 {
-    min-height: 1600px;
+    min-height: 1400px; /* Reduced from 1600px */
     gap: 1rem;
   }
   
   .project-image-container-equal {
-    height: 180px;
+    height: 160px; /* Reduced from 180px */
   }
   
   .project-content-equal {
@@ -610,156 +612,16 @@
     line-height: 1.5;
   }
   
-  .project-tags {
-    gap: 0.4rem;
-  }
-  
-  .project-tag {
-    padding: 0.3rem 0.8rem;
-    font-size: 0.75rem;
-  }
-  
-  .project-links {
-    gap: 0.75rem;
-  }
-  
-  .project-link-btn {
-    min-width: 120px;
-    padding: 0.7rem 1.2rem;
-    font-size: 0.85rem;
+  .slider-arrow {
+    display: none;
   }
   
   .slider-indicators {
     margin-top: 2rem;
-    gap: 0.5rem;
-  }
-  
-  .slider-indicator {
-    width: 10px;
-    height: 10px;
-  }
-  
-  .slider-arrow {
-    width: 35px;
-    height: 35px;
-  }
-  
-  .slider-arrow svg {
-    width: 18px;
-    height: 18px;
-  }
-  
-  .slider-arrow-prev {
-    left: -5px;
-  }
-  
-  .slider-arrow-next {
-    right: -5px;
   }
   
   .section-title {
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
-  }
-  
-  .see-more-btn {
-    font-size: 0.8rem;
-    padding: 0.25rem 0;
-  }
-  
-  .see-more-btn.inline {
-    font-size: 0.8rem;
-  }
-}
-
-@media (max-width: 380px) {
-  .projects-grid-2x2 {
-    min-height: 1500px;
-  }
-  
-  .project-image-container-equal {
-    height: 160px;
-  }
-  
-  .project-content-equal {
-    padding: 0.875rem;
-  }
-}
-
-/* CSS Variables for theming */
-:root {
-  --shadow-color: rgba(0, 0, 0, 0.1);
-  --shadow-color-hover: rgba(0, 0, 0, 0.25);
-  --skeleton-bg: #f0f0f0;
-  --skeleton-color: #ddd;
-  --error-bg: #f8f8f8;
-  --primary-dark: #0056b3;
-  --card-bg: #ffffff;
-  --bg-color: #f8f9fa;
-  --border-color: #e9ecef;
-  --primary-color: #007bff;
-  --text-color: #333333;
-  --tag-bg: #f8f9fa;
-  --tag-text: #495057;
-}
-
-[data-theme="dark"] {
-  --skeleton-bg: #2a2a2a;
-  --skeleton-color: #3a3a3a;
-  --error-bg: #1a1a1a;
-  --shadow-color-hover: rgba(0, 0, 0, 0.5);
-  --card-bg: #2d3748;
-  --bg-color: #1a202c;
-  --border-color: #4a5568;
-  --primary-color: #63b3ed;
-  --text-color: #e2e8f0;
-  --tag-bg: #4a5568;
-  --tag-text: #e2e8f0;
-  --shadow-color: rgba(0, 0, 0, 0.3);
-}
-
-/* Focus styles for accessibility */
-.see-more-btn:focus {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
-}
-
-.slider-arrow:focus {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
-}
-
-.project-link-btn:focus {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
-}
-
-/* Print styles */
-@media print {
-  .projects-section {
-    padding: 40px 0;
-  }
-  
-  .slider-arrow,
-  .slider-indicators,
-  .project-overlay {
-    display: none;
-  }
-  
-  .projects-grid-2x2 {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: auto;
-  }
-  
-  .project-card-equal {
-    break-inside: avoid;
-    min-height: auto;
-    height: auto;
-  }
-  
-  .project-description.expanded {
-    -webkit-line-clamp: unset;
-    line-clamp: unset;
-    display: block;
   }
 }

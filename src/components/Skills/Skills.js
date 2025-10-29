@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { skills } from '../../data/skillsData';
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
 import './Skills.css';
@@ -6,6 +6,8 @@ import './Skills.css';
 const Skills = () => {
   const [ref, skillsInView] = useIntersectionObserver({ threshold: 0.3 });
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
+  const autoAdvanceRef = useRef(null);
 
   const skillsPerSlide = 4; // 2 rows × 2 columns (matching Projects layout)
   const totalSlides = Math.ceil(skills.length / skillsPerSlide);
@@ -21,6 +23,15 @@ const Skills = () => {
   const goToSlide = (slideIndex) => {
     setCurrentSlide(slideIndex);
   };
+
+  // Mouse event handlers for hover detection
+  const handleMouseEnter = useCallback(() => {
+    setIsHovering(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovering(false);
+  }, []);
 
   // Define gradient colors for different skill levels
   const getProgressGradient = (level) => {
@@ -77,16 +88,31 @@ const Skills = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [calculateAndApplyConsistentHeights]);
 
-  // Auto-advance slides
+  // Auto-advance slides with hover interruption
   useEffect(() => {
-    if (!skillsInView || totalSlides <= 1) return;
+    if (!skillsInView || totalSlides <= 1 || isHovering) return;
     
-    const interval = setInterval(() => {
+    autoAdvanceRef.current = setInterval(() => {
       nextSlide();
     }, 5000);
 
-    return () => clearInterval(interval);
-  }, [skillsInView, nextSlide, totalSlides]);
+    return () => {
+      if (autoAdvanceRef.current) {
+        clearInterval(autoAdvanceRef.current);
+        autoAdvanceRef.current = null;
+      }
+    };
+  }, [skillsInView, nextSlide, totalSlides, isHovering]);
+
+  // Clean up interval on unmount
+  useEffect(() => {
+    return () => {
+      if (autoAdvanceRef.current) {
+        clearInterval(autoAdvanceRef.current);
+        autoAdvanceRef.current = null;
+      }
+    };
+  }, []);
 
   // Keyboard navigation
   useEffect(() => {
@@ -140,7 +166,11 @@ const Skills = () => {
             </>
           )}
 
-          <div className="skills-slider-wrapper">
+          <div 
+            className="skills-slider-wrapper"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
             <div 
               className="skills-slider-track"
               style={{ 
@@ -168,42 +198,44 @@ const Skills = () => {
                             className={`skill-card-equal ${skillsInView ? 'skill-animate-in' : ''}`}
                             style={{ animationDelay: `${index * 0.15}s` }}
                           >
-                            <div className="skill-header-equal">
-                              <div className="skill-name-container-equal">
-                                {skill.icon && (
-                                  <img 
-                                    src={skill.icon} 
-                                    alt={`${skill.name} icon`}
-                                    className="skill-icon-equal"
-                                    loading="lazy"
-                                  />
-                                )}
-                                <span className="skill-name-equal">{skill.name}</span>
+                            <div className="skill-card-content">
+                              <div className="skill-header-equal">
+                                <div className="skill-name-container-equal">
+                                  {skill.icon && (
+                                    <img 
+                                      src={skill.icon} 
+                                      alt={`${skill.name} icon`}
+                                      className="skill-icon-equal"
+                                      loading="lazy"
+                                    />
+                                  )}
+                                  <span className="skill-name-equal">{skill.name}</span>
+                                </div>
+                                <span className="skill-percentage-equal">{skill.level}%</span>
                               </div>
-                              <span className="skill-percentage-equal">{skill.level}%</span>
-                            </div>
-                            
-                            <div className="skill-progress-container-equal">
-                              <div className="skill-progress-bar-equal">
-                                <div 
-                                  className={`skill-progress-fill-equal ${skillsInView ? 'skill-animate-width' : ''}`}
-                                  style={{ 
-                                    width: skillsInView ? `${skill.level}%` : '0%',
-                                    background: getProgressGradient(skill.level),
-                                    transitionDelay: `${index * 0.15 + 0.3}s`
-                                  }}
-                                ></div>
-                              </div>
-                            </div>
-                            
-                            <div className="skill-level-indicator-equal">
-                              <div className="skill-level-dots-equal">
-                                {[1, 2, 3, 4, 5].map((dot) => (
+                              
+                              <div className="skill-progress-container-equal">
+                                <div className="skill-progress-bar-equal">
                                   <div 
-                                    key={dot}
-                                    className={`skill-level-dot-equal ${skill.level >= dot * 20 ? 'active' : ''}`}
+                                    className={`skill-progress-fill-equal ${skillsInView ? 'skill-animate-width' : ''}`}
+                                    style={{ 
+                                      width: skillsInView ? `${skill.level}%` : '0%',
+                                      background: getProgressGradient(skill.level),
+                                      transitionDelay: `${index * 0.15 + 0.3}s`
+                                    }}
                                   ></div>
-                                ))}
+                                </div>
+                              </div>
+                              
+                              <div className="skill-level-indicator-equal">
+                                <div className="skill-level-dots-equal">
+                                  {[1, 2, 3, 4, 5].map((dot) => (
+                                    <div 
+                                      key={dot}
+                                      className={`skill-level-dot-equal ${skill.level >= dot * 20 ? 'active' : ''}`}
+                                    ></div>
+                                  ))}
+                                </div>
                               </div>
                             </div>
                           </div>

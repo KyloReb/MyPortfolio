@@ -9,7 +9,6 @@ const Hero = ({ darkMode, toggleDarkMode }) => {
   const [showCursor, setShowCursor] = useState(true);
   const fullText = "I'm David Rebancos II";
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTypingComplete, setIsTypingComplete] = useState(false);
 
   useEffect(() => {
     if (currentIndex < fullText.length) {
@@ -19,7 +18,6 @@ const Hero = ({ darkMode, toggleDarkMode }) => {
       }, 100);
       return () => clearTimeout(timer);
     } else {
-      setIsTypingComplete(true);
       // Blinking cursor effect after typing completes
       const cursorInterval = setInterval(() => {
         setShowCursor(prev => !prev);
@@ -57,8 +55,9 @@ const Hero = ({ darkMode, toggleDarkMode }) => {
           </div>
           
           <p className="hero-intro">
-            I'm a software developer building scalable fintech solutions at Nationlink/Infoserve Inc. 
-            I specialize in full-stack development with the .NET ecosystem and React.js, creating CRM and business intelligence tools that enhance financial service efficiency.
+            I am a full-stack developer driven by the intersection of academic excellence and real-world system reliability.
+
+I bring a proven track record from Nationlink/Infoserve Inc. where I architect and maintain high-performance, user-centric fintech solutions. My core value is the ability to handle the entire lifecycle: from scalable web app development (ASP.NET/React.js) and workflow automation to guaranteeing the 24/7 operational continuity of critical ATM/POS financial networks. With a toolkit spanning the .NET ecosystem, Python (Django), SQL, UI/UX (Figma), and mobile development, I am prepared to immediately solve your complex technical challenges and accelerate your team's development goals.
           </p>
           
           <div className="skills-chip-container">

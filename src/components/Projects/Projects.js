@@ -1,5 +1,5 @@
-// Projects.js - Refactored with comprehensive image fallback handling
-import React, { useState, useEffect, useCallback } from 'react';
+// Projects.js - Refactored with dependency fixes and hover pause
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { projects } from '../../data/projectsData';
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
 import './Projects.css';
@@ -10,12 +10,16 @@ const Projects = () => {
   const [imageErrors, setImageErrors] = useState({});
   const [currentSlide, setCurrentSlide] = useState(0);
   const [expandedDescriptions, setExpandedDescriptions] = useState({});
-
+  const [heightsCalculated, setHeightsCalculated] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  
   const projectsPerSlide = 4;
   const totalSlides = Math.ceil(projects.length / projectsPerSlide);
+  const cardsRef = useRef({});
+  const autoSlideIntervalRef = useRef(null);
 
-  // Multiple fallback strategies
-  const FALLBACK_IMAGES = {
+  // Multiple fallback strategies - moved inside component to avoid dependency issues
+  const FALLBACK_IMAGES = useRef({
     kinderpal: `${process.env.PUBLIC_URL}/assets/images/KinderPal.png`,
     ictowers: `${process.env.PUBLIC_URL}/assets/images/ICTowers.jpg`,
     spaceAttack: `${process.env.PUBLIC_URL}/assets/images/SpaceAttack.png`,
@@ -24,44 +28,26 @@ const Projects = () => {
     ePocket: `${process.env.PUBLIC_URL}/assets/images/EPocket.png`,
     inventoryMgmt: `${process.env.PUBLIC_URL}/assets/images/InventoryManagementSys.png`,
     slaMgmt: `${process.env.PUBLIC_URL}/assets/images/SLAManagement.jpg`
-  };
+  }).current;
 
-  const PLACEHOLDER_IMAGE = `${process.env.PUBLIC_URL}/assets/images/project-placeholder.png`;
   const GENERIC_PLACEHOLDER = 'https://via.placeholder.com/400x250/007bff/ffffff?text=Project+Image';
 
-  const toggleDescription = (projectId, event) => {
+  const toggleDescription = useCallback((projectId, event) => {
     event.stopPropagation();
     setExpandedDescriptions(prev => ({
       ...prev,
       [projectId]: !prev[projectId]
     }));
-  };
+    // Reset heights calculated flag to trigger recalculation
+    setHeightsCalculated(false);
+  }, []);
 
-  const handleImageLoad = (projectIndex) => {
+  const handleImageLoad = useCallback((projectIndex) => {
     console.log(`Image loaded successfully for project index: ${projectIndex}`);
     setLoadedImages(prev => ({ ...prev, [projectIndex]: true }));
-  };
+  }, []);
 
-  const handleImageError = (projectIndex, project, attempt = 1) => {
-    console.warn(`Image load attempt ${attempt} failed for: ${project.title}`);
-    console.warn(`Attempted source: ${getImageSource(project, projectIndex, attempt)}`);
-    
-    if (attempt < 3) {
-      // Retry with different strategy
-      setTimeout(() => {
-        const img = new Image();
-        img.onload = () => handleImageLoad(projectIndex);
-        img.onerror = () => handleImageError(projectIndex, project, attempt + 1);
-        img.src = getImageSource(project, projectIndex, attempt + 1);
-      }, 500);
-    } else {
-      // Final failure
-      console.error(`All image load attempts failed for: ${project.title}`);
-      setImageErrors(prev => ({ ...prev, [projectIndex]: true }));
-    }
-  };
-
-  const getImageSource = (project, index, attempt = 1) => {
+  const getImageSource = useCallback((project, index, attempt = 1) => {
     // If we already have an error, use placeholder
     if (imageErrors[index]) {
       return GENERIC_PLACEHOLDER;
@@ -106,7 +92,25 @@ const Projects = () => {
     
     // Final fallback: Generic placeholder
     return GENERIC_PLACEHOLDER;
-  };
+  }, [FALLBACK_IMAGES, GENERIC_PLACEHOLDER, imageErrors]);
+
+  const handleImageError = useCallback((projectIndex, project, attempt = 1) => {
+    console.warn(`Image load attempt ${attempt} failed for: ${project.title}`);
+    
+    if (attempt < 3) {
+      // Retry with different strategy
+      setTimeout(() => {
+        const img = new Image();
+        img.onload = () => handleImageLoad(projectIndex);
+        img.onerror = () => handleImageError(projectIndex, project, attempt + 1);
+        img.src = getImageSource(project, projectIndex, attempt + 1);
+      }, 500);
+    } else {
+      // Final failure
+      console.error(`All image load attempts failed for: ${project.title}`);
+      setImageErrors(prev => ({ ...prev, [projectIndex]: true }));
+    }
+  }, [getImageSource, handleImageLoad]);
 
   const preloadImages = useCallback(() => {
     projects.forEach((project, index) => {
@@ -115,13 +119,13 @@ const Projects = () => {
       img.onerror = () => handleImageError(index, project, 1);
       img.src = getImageSource(project, index, 1);
     });
-  }, []);
+  }, [getImageSource, handleImageError, handleImageLoad]);
 
   useEffect(() => {
     preloadImages();
   }, [preloadImages]);
 
-  const openProjectLink = (project, event) => {
+  const openProjectLink = useCallback((project, event) => {
     if (event.target.closest('.project-tag') || 
         event.target.closest('.project-links') ||
         event.target.closest('.see-more-btn')) {
@@ -132,7 +136,7 @@ const Projects = () => {
     if (url) {
       window.open(url, '_blank', 'noopener,noreferrer');
     }
-  };
+  }, []);
 
   const nextSlide = useCallback(() => {
     setCurrentSlide(prev => (prev + 1) % totalSlides);
@@ -142,34 +146,101 @@ const Projects = () => {
     setCurrentSlide(prev => (prev - 1 + totalSlides) % totalSlides);
   }, [totalSlides]);
 
-  const goToSlide = (slideIndex) => {
+  const goToSlide = useCallback((slideIndex) => {
     setCurrentSlide(slideIndex);
-  };
+  }, []);
 
+  // Auto-slide management
+  const startAutoSlide = useCallback(() => {
+    if (autoSlideIntervalRef.current) {
+      clearInterval(autoSlideIntervalRef.current);
+    }
+    
+    if (projectsInView && totalSlides > 1 && !isHovering) {
+      autoSlideIntervalRef.current = setInterval(() => {
+        nextSlide();
+      }, 5000);
+    }
+  }, [projectsInView, totalSlides, isHovering, nextSlide]);
+
+  const stopAutoSlide = useCallback(() => {
+    if (autoSlideIntervalRef.current) {
+      clearInterval(autoSlideIntervalRef.current);
+      autoSlideIntervalRef.current = null;
+    }
+  }, []);
+
+  // Handle hover events
+  const handleMouseEnter = useCallback(() => {
+    setIsHovering(true);
+    stopAutoSlide();
+  }, [stopAutoSlide]);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovering(false);
+    startAutoSlide();
+  }, [startAutoSlide]);
+
+  useEffect(() => {
+    startAutoSlide();
+    return () => stopAutoSlide();
+  }, [startAutoSlide, stopAutoSlide]);
+
+  // Optimized height calculation with individual card height management
   const calculateAndApplyConsistentHeights = useCallback(() => {
-    const allCards = document.querySelectorAll('.project-card-equal');
-    if (allCards.length === 0) return;
+    if (heightsCalculated) return;
 
-    allCards.forEach(card => {
+    const currentSlideProjects = projects.slice(
+      currentSlide * projectsPerSlide,
+      currentSlide * projectsPerSlide + projectsPerSlide
+    );
+
+    const cards = currentSlideProjects.map((project, index) => {
+      const globalIndex = currentSlide * projectsPerSlide + index;
+      const projectId = project.id || `project-${globalIndex}`;
+      return document.querySelector(`[data-project-id="${projectId}"]`);
+    }).filter(Boolean);
+
+    if (cards.length === 0) return;
+
+    // Reset all heights to auto first
+    cards.forEach(card => {
       card.style.height = 'auto';
     });
 
+    // Force reflow
     void document.body.offsetHeight;
 
+    // Calculate max height only for non-expanded cards
+    const nonExpandedCards = cards.filter((card, index) => {
+      const globalIndex = currentSlide * projectsPerSlide + index;
+      const projectId = projects[globalIndex].id || `project-${globalIndex}`;
+      return !expandedDescriptions[projectId];
+    });
+
     let maxHeight = 0;
-    allCards.forEach(card => {
+    nonExpandedCards.forEach(card => {
       const height = card.offsetHeight;
       if (height > maxHeight) {
         maxHeight = height;
       }
     });
 
-    if (maxHeight > 0) {
-      allCards.forEach(card => {
+    // Apply consistent height only to non-expanded cards
+    // Expanded cards keep their natural height
+    cards.forEach((card, index) => {
+      const globalIndex = currentSlide * projectsPerSlide + index;
+      const projectId = projects[globalIndex].id || `project-${globalIndex}`;
+      
+      if (!expandedDescriptions[projectId] && maxHeight > 0) {
         card.style.height = `${maxHeight}px`;
-      });
-    }
-  }, []);
+      } else {
+        card.style.height = 'auto';
+      }
+    });
+
+    setHeightsCalculated(true);
+  }, [currentSlide, expandedDescriptions, heightsCalculated, projectsPerSlide]);
 
   useEffect(() => {
     const timer = setTimeout(calculateAndApplyConsistentHeights, 100);
@@ -178,22 +249,13 @@ const Projects = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      calculateAndApplyConsistentHeights();
+      setHeightsCalculated(false);
+      setTimeout(calculateAndApplyConsistentHeights, 150);
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [calculateAndApplyConsistentHeights]);
-
-  useEffect(() => {
-    if (!projectsInView || totalSlides <= 1) return;
-    
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [projectsInView, nextSlide, totalSlides]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -210,6 +272,11 @@ const Projects = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [projectsInView, prevSlide, nextSlide, totalSlides]);
 
+  // Reset heights calculated when slide changes
+  useEffect(() => {
+    setHeightsCalculated(false);
+  }, [currentSlide]);
+
   return (
     <section 
       id="projects" 
@@ -219,7 +286,11 @@ const Projects = () => {
       <div className="projects-container">
         <h2 className="section-title">My Projects</h2>
         
-        <div className="projects-slider-container">
+        <div 
+          className="projects-slider-container"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
           {totalSlides > 1 && (
             <>
               <button 
@@ -283,6 +354,7 @@ const Projects = () => {
                             data-project-id={projectId}
                             role="article"
                             aria-label={`${project.title} project card`}
+                            ref={el => cardsRef.current[projectId] = el}
                           >
                             <div className="project-image-container-equal">
                               <div className="project-image-equal">
