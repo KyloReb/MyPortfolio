@@ -150,11 +150,11 @@ const Contact = () => {
   return (
     <section id="contact" className="contact-section" aria-labelledby="contact-heading">
       <div className="container">
-        <h2 id="contact-heading" className="section-title animate-fade-in">
+        <h2 id="contact-heading" className="section-title">
           Get In Touch
         </h2>
         <div className="contact-container">
-          <div className="contact-info animate-slide-in-left">
+          <div className="contact-info">
             <h3>Let's Connect</h3>
             <p>
               I'm always open to discussing new opportunities, creative projects, 
@@ -195,7 +195,7 @@ const Contact = () => {
             </div>
           </div>
           
-          <div className="contact-form-wrapper animate-slide-in-right">
+          <div className="contact-form-wrapper">
             <Suspense fallback={
               <div className="form-skeleton">
                 <div className="skeleton-line"></div>
@@ -220,7 +220,7 @@ const Contact = () => {
       {/* Notification Popup */}
       {notification.show && (
         <div 
-          className={`notification ${notification.type} animate-notification`}
+          className={`notification ${notification.type}`}
           role="alert"
           aria-live="polite"
         >

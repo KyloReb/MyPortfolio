@@ -1,4 +1,4 @@
-/* Projects.css - Fixed Horizontal Scroll + Hidden Mobile Arrows */
+/* Projects.css - Fixed Hover Overflow + Horizontal Scroll Prevention */
 
 /* ===== SECTION LAYOUT ===== */
 .projects-section {
@@ -6,8 +6,8 @@
   background: var(--bg-color);
   position: relative;
   width: 100%;
-  overflow-x: hidden; /* CRITICAL: Prevent horizontal scroll */
-  overflow-y: visible; /* Allow vertical overflow for hover effects */
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .projects-container {
@@ -15,7 +15,7 @@
   margin: 0 auto;
   padding: 0 1rem;
   width: 100%;
-  overflow: visible; /* Allow overflow for hover effects */
+  overflow: visible;
   position: relative;
 }
 
@@ -44,39 +44,39 @@
 .projects-carousel-wrapper {
   position: relative;
   width: 100%;
-  max-width: 100%; /* ADDED: Ensure max width constraint */
+  max-width: 100%;
   margin: 0 auto;
-  overflow: visible; /* Allow vertical overflow only */
+  overflow: visible; /* Allow hover overflow */
   border-radius: 12px;
   background: transparent;
   border: none;
   outline: none;
-  padding: 20px 0;
+  padding: 40px 0; /* Increased padding for hover space */
 }
 
 /* ===== CAROUSEL LAYOUT - FIXED OVERFLOW ===== */
 .projects-carousel {
   position: relative;
-  overflow: hidden; /* CRITICAL: Hide horizontal overflow here */
+  overflow: visible; /* CHANGED: Allow overflow for hover effects */
   border-radius: 12px;
   margin: 0 auto;
   touch-action: pan-y;
   padding-bottom: 2rem;
   width: 100%;
-  max-width: 100%; /* ADDED: Ensure carousel doesn't exceed container */
+  max-width: 100%;
 }
 
 .carousel-track {
   display: flex;
   transition: transform 0.5s ease-in-out;
   width: 100%;
-  will-change: transform; /* ADDED: Optimize transforms */
+  will-change: transform;
 }
 
 .carousel-slide {
   flex: 0 0 100%;
   min-width: 100%;
-  max-width: 100%; /* ADDED: Prevent expansion */
+  max-width: 100%;
   padding: 0 0.5rem;
   box-sizing: border-box;
 }
@@ -86,13 +86,13 @@
   grid-template-columns: 1fr;
   gap: 1rem;
   width: 100%;
-  max-width: 100%; /* ADDED: Prevent grid expansion */
+  max-width: 100%;
   align-items: stretch;
   position: relative;
-  box-sizing: border-box; /* ADDED: Include padding in width */
+  box-sizing: border-box;
 }
 
-/* ===== PROJECT CARD STYLES - FIXED CONTAINMENT ===== */
+/* ===== PROJECT CARD STYLES - FIXED HOVER OVERFLOW ===== */
 .project-card {
   background: var(--card-bg);
   border-radius: 12px;
@@ -108,8 +108,8 @@
   flex-direction: column;
   height: 100%;
   min-height: 380px;
-  max-width: 100%; /* ADDED: Prevent card expansion */
-  box-sizing: border-box; /* ADDED: Include border in width */
+  max-width: 100%;
+  box-sizing: border-box;
   z-index: 1;
   isolation: isolate;
 }
@@ -119,10 +119,16 @@
   transform: translateY(0);
 }
 
+/* IMPROVED HOVER EFFECTS WITH BETTER Z-INDEX MANAGEMENT */
 .project-card:hover {
-  transform: translateY(-8px) scale(1.02); /* MODIFIED: Added slight scale */
-  box-shadow: 0 12px 30px var(--shadow-color-hover);
-  z-index: 100; /* Elevated but not extreme */
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px var(--shadow-color-hover);
+  z-index: 1000; /* Increased z-index to ensure cards appear above siblings */
+}
+
+/* Ensure hovered cards appear above subsequent slides */
+.carousel-slide .project-card:hover {
+  z-index: 1000;
 }
 
 /* ===== PROJECT IMAGE STYLES ===== */
@@ -275,7 +281,7 @@
   flex-direction: column;
   height: 100%;
   border-radius: 0 0 12px 12px;
-  box-sizing: border-box; /* ADDED: Include padding in dimensions */
+  box-sizing: border-box;
 }
 
 .project-title {
@@ -400,7 +406,7 @@
   cursor: pointer;
   font-size: 1.2rem;
   font-weight: bold;
-  z-index: 50;
+  z-index: 100; /* Increased z-index */
   transition: all 0.3s ease;
   opacity: 0.9;
 }
@@ -481,14 +487,18 @@
 /* MOBILE: Hide navigation arrows below 768px */
 @media (max-width: 767px) {
   .carousel-arrow {
-    display: none !important; /* Force hide on mobile */
+    display: none !important;
+  }
+  
+  .projects-carousel-wrapper {
+    padding: 30px 0; /* Reduced padding on mobile */
   }
 }
 
 /* TABLET AND UP: Show navigation arrows from 768px and above */
 @media (min-width: 768px) {
   .carousel-arrow {
-    display: flex; /* Show arrows on tablet and desktop */
+    display: flex;
     width: 50px;
     height: 50px;
     font-size: 1.5rem;
@@ -733,11 +743,11 @@
 
 /* ===== CRITICAL FIX: Prevent body horizontal scroll ===== */
 body {
-  overflow-x: hidden; /* Add this to your global styles if not already present */
+  overflow-x: hidden;
   max-width: 100vw;
 }
 
 html {
-  overflow-x: hidden; /* Add this to your global styles if not already present */
+  overflow-x: hidden;
   max-width: 100vw;
 }

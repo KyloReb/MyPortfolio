@@ -1,5 +1,5 @@
 // Hero.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { skills } from '../../data/skillsData';
 import { useScrollToSection } from '../../hooks/useScrollToSection';
 import Navbar from './Navbar';
@@ -44,11 +44,15 @@ const Hero = ({ darkMode, toggleDarkMode }) => {
     typeText();
   }, [isMobile, fullText]);
 
+  const handleViewResume = useCallback(() => {
+    window.open(`${process.env.PUBLIC_URL}/assets/Resume.pdf`, '_blank', 'noopener,noreferrer');
+  }, []);
+
   return (
     <section id="home" className="hero-section">
       <Navbar darkMode={darkMode} />
       
-      {/* Theme Toggle - now properly positioned and will stay in hero section only */}
+      {/* Theme Toggle */}
       <div className="theme-toggle-container">
         <label className="theme-switch" htmlFor="checkbox">
           <input 
@@ -85,6 +89,15 @@ const Hero = ({ darkMode, toggleDarkMode }) => {
             app development (ASP.NET/React.js) and workflow automation to guaranteeing the 24/7 operational continuity of 
             critical ATM/POS financial networks.
           </p>
+
+          {/* Resume Button - Chip Style */}
+          <button 
+            onClick={handleViewResume}
+            className="resume-chip-button"
+            aria-label="View my resume"
+          >
+            View Resume
+          </button>
           
           <div className="skills-chip-container">
             {skills.slice(0, isMobile ? 6 : skills.length).map((skill, index) => (

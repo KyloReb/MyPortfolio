@@ -6,7 +6,7 @@
   justify-content: space-between;
   align-items: center;
   color: var(--text-color);
-  padding: 80px 15px 30px; /* Changed from 60px to 80px */
+  padding: 80px 15px 30px;
   position: relative;
   transition: background 0.3s ease;
   overflow: hidden;
@@ -121,6 +121,63 @@
   width: 100%;
   padding: 0 10px;
   box-sizing: border-box;
+}
+
+/* Resume Button - Chip Style */
+.resume-chip-button {
+  background: var(--chip-bg);
+  color: var(--chip-text);
+  padding: 0.8rem 1.8rem;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  margin: 0 auto 2rem;
+  animation: fadeInUp 1s ease 0.5s both;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: auto;
+  white-space: nowrap;
+}
+
+.dark-mode .resume-chip-button {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.resume-chip-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+  z-index: -1;
+}
+
+.resume-chip-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px var(--shadow-color);
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.resume-chip-button:hover::before {
+  left: 100%;
+}
+
+.resume-chip-button:active {
+  transform: translateY(-1px);
 }
 
 .skills-chip-container {
@@ -257,16 +314,6 @@
   }
 }
 
-@keyframes typing {
-  from { width: 0 }
-  to { width: 100% }
-}
-
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
-
 /* Enhanced Background Animation */
 .hero-section::before {
   content: '';
@@ -296,7 +343,6 @@
   animation: float 15s ease-in-out infinite reverse;
 }
 
-/* Additional background elements for more animation */
 .hero-bg-element {
   position: absolute;
   border-radius: 50%;
@@ -339,7 +385,7 @@
   z-index: 1;
 }
 
-/* Fixed Theme Toggle - stays in hero section only */
+/* Fixed Theme Toggle */
 .theme-toggle-container {
   position: absolute;
   top: 25px;
@@ -421,7 +467,6 @@ input:checked + .slider .moon {
   opacity: 1;
 }
 
-/* Skills more indicator */
 .skills-more-indicator {
   font-size: 0.9rem;
   color: var(--text-color);
@@ -430,6 +475,7 @@ input:checked + .slider .moon {
   animation: fadeInUp 1s ease 0.8s both;
 }
 
+/* Mobile First Approach - Base styles for mobile */
 @media (max-width: 768px) {
   .hero-section {
     padding: 70px 10px 20px;
@@ -475,6 +521,13 @@ input:checked + .slider .moon {
     font-size: 1rem;
     margin-bottom: 1.5rem;
     padding: 0 5px;
+  }
+
+  /* Resume Button Mobile */
+  .resume-chip-button {
+    padding: 0.7rem 1.6rem;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
   }
   
   .skills-chip-container {
@@ -536,7 +589,7 @@ input:checked + .slider .moon {
 
 @media (max-width: 480px) {
   .hero-section {
-    padding: 70px 5px 15px;;
+    padding: 70px 5px 15px;
   }
   
   .hi-text {
@@ -565,6 +618,13 @@ input:checked + .slider .moon {
     margin-bottom: 1.2rem;
     padding: 0;
   }
+
+  /* Resume Button Small Mobile */
+  .resume-chip-button {
+    padding: 0.65rem 1.4rem;
+    font-size: 0.85rem;
+    margin-bottom: 1.2rem;
+  }
   
   .skills-chip-container {
     gap: 0.5rem;
@@ -586,7 +646,7 @@ input:checked + .slider .moon {
   }
 }
 
-/* Extra large screens - utilize even more space */
+/* Extra large screens */
 @media (min-width: 1600px) {
   .hero-container {
     max-width: 1600px;
@@ -598,5 +658,10 @@ input:checked + .slider .moon {
   
   .hero-intro {
     max-width: 1200px;
+  }
+
+  .resume-chip-button {
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
   }
 }
