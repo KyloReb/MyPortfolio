@@ -6,7 +6,7 @@
   justify-content: space-between;
   align-items: center;
   color: var(--text-color);
-  padding: 60px 15px 30px;
+  padding: 80px 15px 30px; /* Changed from 60px to 80px */
   position: relative;
   transition: background 0.3s ease;
   overflow: hidden;
@@ -43,21 +43,23 @@
   box-sizing: border-box;
 }
 
-/* Enhanced Greeting Section */
+/* Enhanced Greeting Section - HI beside name */
 .hero-greeting {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  justify-content: center;
   margin-bottom: 1.5rem;
   position: relative;
   width: 100%;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .hi-text {
   font-size: 4rem;
   font-weight: 900;
   color: var(--primary-color);
-  margin-bottom: 0.5rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   letter-spacing: 2px;
   animation: bounceIn 0.8s ease-out;
@@ -86,7 +88,6 @@
   font-weight: 700;
   color: var(--text-color);
   position: relative;
-  width: 100%;
 }
 
 .typed-text {
@@ -266,7 +267,7 @@
   51%, 100% { opacity: 0; }
 }
 
-/* Background decoration */
+/* Enhanced Background Animation */
 .hero-section::before {
   content: '';
   position: absolute;
@@ -278,6 +279,7 @@
   background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
   opacity: 0.05;
   z-index: 0;
+  animation: float 20s ease-in-out infinite;
 }
 
 .hero-section::after {
@@ -291,6 +293,45 @@
   background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
   opacity: 0.05;
   z-index: 0;
+  animation: float 15s ease-in-out infinite reverse;
+}
+
+/* Additional background elements for more animation */
+.hero-bg-element {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--secondary-color) 0%, transparent 70%);
+  opacity: 0.03;
+  z-index: 0;
+  animation: float 25s ease-in-out infinite;
+}
+
+.hero-bg-element:nth-child(3) {
+  top: 20%;
+  right: 10%;
+  width: 300px;
+  height: 300px;
+  animation-delay: -5s;
+}
+
+.hero-bg-element:nth-child(4) {
+  bottom: 40%;
+  left: 20%;
+  width: 200px;
+  height: 200px;
+  animation-delay: -10s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-20px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(10px) rotate(240deg);
+  }
 }
 
 .hero-content > * {
@@ -298,9 +339,100 @@
   z-index: 1;
 }
 
+/* Fixed Theme Toggle - stays in hero section only */
+.theme-toggle-container {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  z-index: 1001;
+}
+
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.theme-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  box-sizing: border-box;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider .sun, .slider .moon {
+  font-size: 14px;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+  line-height: 1;
+}
+
+.slider .sun {
+  opacity: 1;
+}
+
+.slider .moon {
+  opacity: 0;
+}
+
+input:checked + .slider .sun {
+  opacity: 0;
+}
+
+input:checked + .slider .moon {
+  opacity: 1;
+}
+
+/* Skills more indicator */
+.skills-more-indicator {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  opacity: 0.7;
+  margin-top: 0.5rem;
+  animation: fadeInUp 1s ease 0.8s both;
+}
+
 @media (max-width: 768px) {
   .hero-section {
-    padding: 60px 10px 20px;
+    padding: 70px 10px 20px;
     justify-content: space-between;
   }
   
@@ -312,8 +444,18 @@
     padding: 0 8px;
   }
   
+  .hero-greeting {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
   .hi-text {
     font-size: 3rem;
+    margin-bottom: 0;
+  }
+  
+  .hi-text::after {
+    width: 60px;
   }
   
   .typing-container {
@@ -360,19 +502,49 @@
     font-size: 1.6rem;
   }
   
+  .theme-toggle-container {
+    top: 20px;
+    right: 20px;
+  }
+  
+  .theme-switch {
+    width: 50px;
+    height: 28px;
+  }
+  
+  .slider:before {
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(22px);
+  }
+  
+  .slider .sun, .slider .moon {
+    font-size: 12px;
+  }
+  
   .hero-section::before,
-  .hero-section::after {
+  .hero-section::after,
+  .hero-bg-element {
     display: none;
   }
 }
 
 @media (max-width: 480px) {
   .hero-section {
-    padding: 60px 5px 15px;
+    padding: 70px 5px 15px;;
   }
   
   .hi-text {
     font-size: 2.5rem;
+  }
+  
+  .hi-text::after {
+    width: 50px;
   }
   
   .typing-container {
