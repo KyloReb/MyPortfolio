@@ -1,5 +1,4 @@
-/* Projects.css - Fixed Hover Overflow + Horizontal Scroll Prevention */
-
+/* Projects.css - Fixed Card Height Consistency */
 /* ===== SECTION LAYOUT ===== */
 .projects-section {
   padding: 40px 0;
@@ -7,7 +6,6 @@
   position: relative;
   width: 100%;
   overflow-x: hidden;
-  overflow-y: visible;
 }
 
 .projects-container {
@@ -15,8 +13,6 @@
   margin: 0 auto;
   padding: 0 1rem;
   width: 100%;
-  overflow: visible;
-  position: relative;
 }
 
 .section-title {
@@ -40,30 +36,24 @@
   border-radius: 2px;
 }
 
-/* ===== CAROUSEL WRAPPER - PROPER CONTAINMENT ===== */
+/* ===== CAROUSEL WRAPPER - FIXED HEIGHT CONSISTENCY ===== */
 .projects-carousel-wrapper {
   position: relative;
   width: 100%;
-  max-width: 100%;
   margin: 0 auto;
-  overflow: visible; /* Allow hover overflow */
+  overflow: visible;
   border-radius: 12px;
-  background: transparent;
-  border: none;
-  outline: none;
-  padding: 40px 0; /* Increased padding for hover space */
+  padding: 40px 0;
 }
 
-/* ===== CAROUSEL LAYOUT - FIXED OVERFLOW ===== */
 .projects-carousel {
   position: relative;
-  overflow: visible; /* CHANGED: Allow overflow for hover effects */
+  overflow: visible;
   border-radius: 12px;
   margin: 0 auto;
   touch-action: pan-y;
   padding-bottom: 2rem;
   width: 100%;
-  max-width: 100%;
 }
 
 .carousel-track {
@@ -71,8 +61,6 @@
   transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   width: 100%;
   will-change: transform;
-  backface-visibility: hidden;
-  perspective: 1000px;
 }
 
 .carousel-slide {
@@ -81,21 +69,19 @@
   max-width: 100%;
   padding: 0 0.5rem;
   box-sizing: border-box;
-  backface-visibility: hidden;
 }
 
+/* FIXED: Consistent grid with equal height cards */
 .projects-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
   width: 100%;
-  max-width: 100%;
-  align-items: stretch;
+  align-items: stretch; /* Ensures all cards stretch to same height */
   position: relative;
-  box-sizing: border-box;
 }
 
-/* ===== PROJECT CARD STYLES - FIXED HOVER OVERFLOW ===== */
+/* ===== PROJECT CARD STYLES - FIXED HEIGHT CONSISTENCY ===== */
 .project-card {
   background: var(--card-bg);
   border-radius: 12px;
@@ -109,17 +95,10 @@
   transform: translateY(20px);
   display: flex;
   flex-direction: column;
-  height: 100%;
-  min-height: 380px;
+  height: 100%; /* Use 100% of grid cell height */
+  min-height: 380px; /* Base minimum height */
   max-width: 100%;
   box-sizing: border-box;
-  z-index: 1;
-  isolation: isolate;
-}
-
-.project-card {
-  backface-visibility: hidden;
-  transform: translate3d(0, 0, 0);
 }
 
 .project-card.project-animate-in {
@@ -127,15 +106,10 @@
   transform: translateY(0);
 }
 
-/* IMPROVED HOVER EFFECTS WITH BETTER Z-INDEX MANAGEMENT */
+/* FIXED: Consistent hover effects */
 .project-card:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow: 0 20px 40px var(--shadow-color-hover);
-  z-index: 1000; /* Increased z-index to ensure cards appear above siblings */
-}
-
-/* Ensure hovered cards appear above subsequent slides */
-.carousel-slide .project-card:hover {
   z-index: 1000;
 }
 
@@ -145,7 +119,7 @@
   width: 100%;
   overflow: hidden;
   flex-shrink: 0;
-  height: 180px;
+  height: 180px; /* Fixed image height */
   border-radius: 12px 12px 0 0;
 }
 
@@ -239,7 +213,6 @@
   flex-direction: column;
   align-items: center;
   z-index: 3;
-  position: relative;
 }
 
 .project-link-btn {
@@ -257,8 +230,6 @@
   font-size: 0.8rem;
   min-width: 110px;
   justify-content: center;
-  z-index: 4;
-  position: relative;
 }
 
 .project-link-btn:hover {
@@ -278,16 +249,16 @@
   color: white;
 }
 
-/* ===== PROJECT CONTENT STYLES ===== */
+/* ===== PROJECT CONTENT STYLES - FIXED HEIGHT MANAGEMENT ===== */
 .project-content {
   padding: 1rem;
   position: relative;
   z-index: 1;
   background: var(--card-bg);
-  flex: 1;
+  flex: 1; /* Takes remaining space after image */
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 200px; /* Fixed content minimum height */
   border-radius: 0 0 12px 12px;
   box-sizing: border-box;
 }
@@ -298,15 +269,16 @@
   margin-bottom: 0.5rem;
   color: var(--text-color);
   line-height: 1.3;
-  flex-shrink: 0;
+  flex-shrink: 0; /* Prevent title from shrinking */
 }
 
+/* FIXED: Consistent description container */
 .project-description-container {
-  flex: 1;
+  flex: 1; /* Takes available space between title and tags */
   display: flex;
   flex-direction: column;
   margin-bottom: 0.75rem;
-  position: relative;
+  min-height: 80px; /* Minimum description area height */
 }
 
 .project-description {
@@ -322,7 +294,6 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   transition: all 0.3s ease;
-  position: relative;
 }
 
 .project-description.expanded {
@@ -346,8 +317,6 @@
   margin-top: auto;
   border-radius: 4px;
   flex-shrink: 0;
-  position: relative;
-  z-index: 2;
 }
 
 .see-more-btn.inline {
@@ -355,26 +324,20 @@
   margin-left: 4px;
   padding: 0;
   margin-top: 0;
-  align-self: auto;
-  text-decoration: underline;
-  background: none;
-  border: none;
-  font: inherit;
-  color: var(--primary-color);
-  cursor: pointer;
 }
 
 .see-more-btn:hover {
   color: var(--primary-dark);
 }
 
+/* FIXED: Consistent tags positioning */
 .project-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  margin-top: auto;
+  margin-top: auto; /* Pushes tags to bottom */
   flex-shrink: 0;
-  min-height: 24px;
+  min-height: 24px; /* Fixed tags area height */
   align-items: flex-end;
 }
 
@@ -414,7 +377,7 @@
   cursor: pointer;
   font-size: 1.2rem;
   font-weight: bold;
-  z-index: 100; /* Increased z-index */
+  z-index: 100;
   transition: all 0.3s ease;
   opacity: 0.9;
 }
@@ -442,7 +405,6 @@
   padding: 0 1rem;
   position: relative;
   z-index: 10;
-  width: 100%;
 }
 
 .carousel-indicator {
@@ -465,7 +427,7 @@
   transform: scale(1.1);
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
+/* ===== RESPONSIVE DESIGN - FIXED HEIGHT CONSISTENCY ===== */
 
 /* Mobile First - Base styles already defined */
 
@@ -480,15 +442,19 @@
   }
   
   .project-card {
-    min-height: 400px;
+    min-height: 400px; /* Increased but consistent */
   }
   
   .project-image-container {
-    height: 200px;
+    height: 200px; /* Consistent image height */
   }
   
   .projects-grid {
     gap: 1.2rem;
+  }
+  
+  .project-content {
+    min-height: 220px; /* Increased but consistent */
   }
 }
 
@@ -499,7 +465,24 @@
   }
   
   .projects-carousel-wrapper {
-    padding: 30px 0; /* Reduced padding on mobile */
+    padding: 30px 0;
+  }
+  
+  /* FIXED: Mobile-specific height adjustments */
+  .project-card {
+    min-height: 380px; /* Consistent mobile height */
+  }
+  
+  .project-image-container {
+    height: 160px; /* Consistent mobile image height */
+  }
+  
+  .project-content {
+    min-height: 200px; /* Consistent mobile content height */
+  }
+  
+  .project-description-container {
+    min-height: 70px; /* Consistent mobile description height */
   }
 }
 
@@ -536,14 +519,19 @@
   .projects-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
+    align-items: stretch; /* Critical for equal height */
   }
   
   .project-card {
-    min-height: 420px;
+    min-height: 450px; /* Consistent tablet height */
   }
   
   .project-image-container {
-    height: 200px;
+    height: 200px; /* Consistent tablet image height */
+  }
+  
+  .project-content {
+    min-height: 230px; /* Consistent tablet content height */
   }
 }
 
@@ -562,11 +550,15 @@
   }
   
   .project-card {
-    min-height: 450px;
+    min-height: 480px; /* Consistent desktop height */
   }
   
   .project-image-container {
-    height: 220px;
+    height: 220px; /* Consistent desktop image height */
+  }
+  
+  .project-content {
+    min-height: 240px; /* Consistent desktop content height */
   }
   
   .project-title {
@@ -604,11 +596,15 @@
   }
   
   .project-card {
-    min-height: 480px;
+    min-height: 500px; /* Consistent large desktop height */
   }
   
   .project-image-container {
-    height: 240px;
+    height: 240px; /* Consistent large desktop image height */
+  }
+  
+  .project-content {
+    min-height: 240px; /* Consistent large desktop content height */
   }
 }
 
@@ -626,67 +622,15 @@
   }
   
   .project-card {
-    min-height: 500px;
+    min-height: 520px; /* Consistent extra large desktop height */
   }
   
   .project-image-container {
-    height: 250px;
-  }
-}
-
-/* ===== MOBILE SWIPE IMPROVEMENTS ===== */
-@media (max-width: 767px) {
-  .projects-carousel {
-    padding-bottom: 1rem;
-  }
-  
-  .carousel-track {
-    cursor: grab;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-  
-  .carousel-track:active {
-    cursor: grabbing;
-  }
-  
-  .carousel-slide {
-    padding: 0 0.25rem;
-  }
-  
-  .projects-grid {
-    gap: 0.8rem;
-  }
-  
-  .project-card {
-    min-height: 360px;
-  }
-  
-  .project-image-container {
-    height: 160px;
+    height: 250px; /* Consistent extra large desktop image height */
   }
   
   .project-content {
-    padding: 0.8rem;
-  }
-  
-  .project-title {
-    font-size: 1rem;
-  }
-  
-  .project-description {
-    font-size: 0.8rem;
-  }
-  
-  .project-tag {
-    font-size: 0.65rem;
-    padding: 0.2rem 0.5rem;
-  }
-  
-  .project-link-btn {
-    min-width: 100px;
-    padding: 0.5rem 0.8rem;
-    font-size: 0.75rem;
+    min-height: 250px; /* Consistent extra large desktop content height */
   }
 }
 
@@ -732,21 +676,6 @@
 .see-more-btn:focus-visible {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .project-card {
-    border: 2px solid currentColor;
-  }
-  
-  .project-overlay {
-    background: rgba(0, 0, 0, 0.9);
-  }
-  
-  .carousel-indicator {
-    border: 1px solid currentColor;
-  }
 }
 
 /* ===== CRITICAL FIX: Prevent body horizontal scroll ===== */
