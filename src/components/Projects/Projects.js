@@ -39,12 +39,13 @@ const Projects = () => {
   const projectsPerSlide = 4;
   const totalSlides = Math.ceil(projects.length / projectsPerSlide);
 
-  // Carousel Navigation
-  const getCurrentSlideProjects = () => {
-    const startIndex = currentSlide * projectsPerSlide;
+  // FIXED: Get projects for specific slide
+  const getProjectsForSlide = useCallback((slideIndex) => {
+    const startIndex = slideIndex * projectsPerSlide;
     return projects.slice(startIndex, startIndex + projectsPerSlide);
-  };
+  }, [projectsPerSlide]);
 
+  // FIXED: Navigation functions
   const nextSlide = useCallback(() => {
     setCurrentSlide(prev => (prev + 1) % totalSlides);
   }, [totalSlides]);
@@ -173,9 +174,9 @@ const Projects = () => {
     }
   };
 
-  // Image Handling
-  const getImageSource = useCallback((project, index, attempt = 1) => {
-    if (imageErrors[index]) {
+  // FIXED: Image Handling with unique keys
+  const getImageSource = useCallback((project, projectKey, attempt = 1) => {
+    if (imageErrors[projectKey]) {
       return GENERIC_PLACEHOLDER;
     }
 
@@ -210,29 +211,31 @@ const Projects = () => {
     return GENERIC_PLACEHOLDER;
   }, [FALLBACK_IMAGES, GENERIC_PLACEHOLDER, imageErrors]);
 
-  const handleImageLoad = useCallback((projectIndex) => {
-    setLoadedImages(prev => ({ ...prev, [projectIndex]: true }));
+  const handleImageLoad = useCallback((projectKey) => {
+    setLoadedImages(prev => ({ ...prev, [projectKey]: true }));
   }, []);
 
-  const handleImageError = useCallback((projectIndex, project, attempt = 1) => {
+  const handleImageError = useCallback((projectKey, project, attempt = 1) => {
     if (attempt < 3) {
       setTimeout(() => {
         const img = new Image();
-        img.onload = () => handleImageLoad(projectIndex);
-        img.onerror = () => handleImageError(projectIndex, project, attempt + 1);
-        img.src = getImageSource(project, projectIndex, attempt + 1);
+        img.onload = () => handleImageLoad(projectKey);
+        img.onerror = () => handleImageError(projectKey, project, attempt + 1);
+        img.src = getImageSource(project, projectKey, attempt + 1);
       }, 500);
     } else {
-      setImageErrors(prev => ({ ...prev, [projectIndex]: true }));
+      setImageErrors(prev => ({ ...prev, [projectKey]: true }));
     }
   }, [getImageSource, handleImageLoad]);
 
+  // FIXED: Preload images with unique keys
   const preloadImages = useCallback(() => {
     projects.forEach((project, index) => {
+      const projectKey = `project-${project.id || index}`;
       const img = new Image();
-      img.onload = () => handleImageLoad(index);
-      img.onerror = () => handleImageError(index, project, 1);
-      img.src = getImageSource(project, index, 1);
+      img.onload = () => handleImageLoad(projectKey);
+      img.onerror = () => handleImageError(projectKey, project, 1);
+      img.src = getImageSource(project, projectKey, 1);
     });
   }, [getImageSource, handleImageError, handleImageLoad]);
 
@@ -262,10 +265,10 @@ const Projects = () => {
     }
   }, []);
 
-  // Project Card Renderer
-  const renderProjectCard = (project, index) => {
-    const projectId = project.id || `project-${index}`;
-    const isExpanded = expandedDescriptions[projectId];
+  // FIXED: Project Card Renderer with unique keys
+  const renderProjectCard = (project, slideIndex, cardIndex) => {
+    const projectKey = `slide-${slideIndex}-card-${cardIndex}-${project.id || `project-${slideIndex * projectsPerSlide + cardIndex}`}`;
+    const isExpanded = expandedDescriptions[projectKey];
     const needsSeeMore = project.description.length > 120;
     const displayDescription = isExpanded 
       ? project.description 
@@ -273,31 +276,31 @@ const Projects = () => {
 
     return (
       <div 
-        key={projectId} 
+        key={projectKey} 
         className={`project-card ${projectsInView ? 'project-animate-in' : ''}`}
-        style={{ animationDelay: `${index * 0.1}s` }}
+        style={{ animationDelay: `${cardIndex * 0.1}s` }}
         onClick={(e) => openProjectLink(project, e)}
-        data-project-id={projectId}
+        data-project-key={projectKey}
         role="article"
         aria-label={`${project.title} project card`}
-        ref={el => cardsRef.current[projectId] = el}
+        ref={el => cardsRef.current[projectKey] = el}
       >
         <div className="project-image-container">
           <div className="project-image">
-            {!loadedImages[index] && !imageErrors[index] && (
+            {!loadedImages[projectKey] && !imageErrors[projectKey] && (
               <div className="image-skeleton">
                 <div className="skeleton-loader"></div>
               </div>
             )}
             <img 
-              src={getImageSource(project, index, 1)}
+              src={getImageSource(project, projectKey, 1)}
               alt={`${project.title} - Project Screenshot`}
-              onLoad={() => handleImageLoad(index)}
-              onError={() => handleImageError(index, project, 1)}
+              onLoad={() => handleImageLoad(projectKey)}
+              onError={() => handleImageError(projectKey, project, 1)}
               className={`${
-                loadedImages[index] ? 'loaded' : 'loading'
+                loadedImages[projectKey] ? 'loaded' : 'loading'
               } ${
-                imageErrors[index] ? 'image-error' : ''
+                imageErrors[projectKey] ? 'image-error' : ''
               }`}
               loading="lazy"
             />
@@ -346,7 +349,7 @@ const Projects = () => {
               {needsSeeMore && !isExpanded && (
                 <button 
                   className="see-more-btn inline"
-                  onClick={(e) => toggleDescription(projectId, e)}
+                  onClick={(e) => toggleDescription(projectKey, e)}
                   aria-label="Show more"
                 >
                   See More
@@ -356,7 +359,7 @@ const Projects = () => {
             {needsSeeMore && isExpanded && (
               <button 
                 className="see-more-btn"
-                onClick={(e) => toggleDescription(projectId, e)}
+                onClick={(e) => toggleDescription(projectKey, e)}
                 aria-label="Show less"
               >
                 Show Less
@@ -385,7 +388,7 @@ const Projects = () => {
       <div className="projects-container">
         <h2 className="section-title">My Projects</h2>
         
-        {/* Carousel Container - FIXED OVERFLOW CONSTRAINTS */}
+        {/* Carousel Container */}
         <div 
           className="projects-carousel-wrapper"
           onMouseEnter={handleMouseEnter}
@@ -406,13 +409,13 @@ const Projects = () => {
             >
               {Array.from({ length: totalSlides }).map((_, slideIndex) => (
                 <div 
-                  key={slideIndex} 
+                  key={`slide-${slideIndex}`} 
                   className="carousel-slide"
                   aria-hidden={currentSlide !== slideIndex}
                 >
                   <div className="projects-grid">
-                    {getCurrentSlideProjects().map((project, index) => 
-                      renderProjectCard(project, slideIndex * projectsPerSlide + index)
+                    {getProjectsForSlide(slideIndex).map((project, cardIndex) => 
+                      renderProjectCard(project, slideIndex, cardIndex)
                     )}
                   </div>
                 </div>

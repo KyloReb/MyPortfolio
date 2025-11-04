@@ -68,9 +68,11 @@
 
 .carousel-track {
   display: flex;
-  transition: transform 0.5s ease-in-out;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   width: 100%;
   will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
 .carousel-slide {
@@ -79,6 +81,7 @@
   max-width: 100%;
   padding: 0 0.5rem;
   box-sizing: border-box;
+  backface-visibility: hidden;
 }
 
 .projects-grid {
@@ -112,6 +115,11 @@
   box-sizing: border-box;
   z-index: 1;
   isolation: isolate;
+}
+
+.project-card {
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
 }
 
 .project-card.project-animate-in {
