@@ -1,5 +1,5 @@
 // AwardsModal.js
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './Modal.css';
 
 // External Link Icon Component
@@ -20,6 +20,39 @@ const ExternalLinkIcon = React.memo(({ className = '' }) => (
   </svg>
 ));
 
+// Copy Icon Component
+const CopyIcon = React.memo(({ className = '' }) => (
+  <svg 
+    className={`copy-icon ${className}`}
+    width="16" 
+    height="16" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2"
+    aria-hidden="true"
+  >
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+  </svg>
+));
+
+// Check Icon Component (for copied state)
+const CheckIcon = React.memo(({ className = '' }) => (
+  <svg 
+    className={`copy-icon ${className}`}
+    width="16" 
+    height="16" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2"
+    aria-hidden="true"
+  >
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+));
+
 // Image Component for Modal
 const ModalImageComponent = React.memo(({ item, imageLoaded, onImageLoad }) => (
   <div className="modal-image-wrapper">
@@ -37,6 +70,48 @@ const ModalImageComponent = React.memo(({ item, imageLoaded, onImageLoad }) => (
     />
   </div>
 ));
+
+// Credential ID Component with Copy Functionality
+const CredentialIdComponent = React.memo(({ credentialId }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(credentialId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = credentialId;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  }, [credentialId]);
+
+  return (
+    <div className="credential-id-container">
+      <span className="credential-id-text">{credentialId}</span>
+      <button 
+        className={`btn-copy ${copied ? 'copied' : ''}`}
+        onClick={handleCopy}
+        aria-label={copied ? "Copied!" : "Copy credential ID"}
+        title={copied ? "Copied!" : "Copy to clipboard"}
+      >
+        {copied ? <CheckIcon /> : <CopyIcon />}
+      </button>
+      {copied && (
+        <div className="copy-notification" role="alert">
+          ✓ Copied to clipboard!
+        </div>
+      )}
+    </div>
+  );
+});
 
 // Modal Component
 const AwardsModal = React.memo(({ 
@@ -133,9 +208,10 @@ const AwardsModal = React.memo(({
                 <strong>Expiration:</strong> {item.expirationDate}
               </p>
               {item.credentialId && (
-                <p className="modal-credential-id">
-                  <strong>Credential ID:</strong> {item.credentialId}
-                </p>
+                <div className="modal-credential-row">
+                  <strong>Credential ID:</strong>
+                  <CredentialIdComponent credentialId={item.credentialId} />
+                </div>
               )}
             </div>
             
@@ -155,7 +231,7 @@ const AwardsModal = React.memo(({
                   className="btn-verify"
                   onClick={(e) => onVerify(item.verifyUrl, e)}
                 >
-                  🌐 Verify Online
+                  🌐 Verify
                 </button>
               )}
               {item.pdf && (
