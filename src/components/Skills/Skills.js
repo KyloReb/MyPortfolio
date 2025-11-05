@@ -1,322 +1,382 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+// Skills.js - Cleaned version with mobile-only swipe
+import React, { useState, useCallback, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useDrag } from '@use-gesture/react';
 import { skills } from '../../data/skillsData';
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
 import './Skills.css';
 
 const Skills = () => {
-  const [ref, skillsInView] = useIntersectionObserver({ threshold: 0.3 });
+  const [ref, skillsInView] = useIntersectionObserver({ threshold: 0.1 });
+  const [animatedSkills, setAnimatedSkills] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isHovering, setIsHovering] = useState(false);
-  const [isSwiping, setIsSwiping] = useState(false);
-  const [touchStart, setTouchStart] = useState(null);
-  const [touchEnd, setTouchEnd] = useState(null);
-  const autoAdvanceRef = useRef(null);
-  const sliderTrackRef = useRef(null);
-  const sliderContainerRef = useRef(null);
+  const [autoPlay, setAutoPlay] = useState(true);
+  const [direction, setDirection] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Minimum swipe distance required (in pixels)
-  const minSwipeDistance = 50;
-
-  const skillsPerSlide = 4; // 2 rows × 2 columns
-  const totalSlides = Math.ceil(skills.length / skillsPerSlide);
-
-  const nextSlide = useCallback(() => {
-    setCurrentSlide(prev => (prev + 1) % totalSlides);
-  }, [totalSlides]);
-
-  const prevSlide = useCallback(() => {
-    setCurrentSlide(prev => (prev - 1 + totalSlides) % totalSlides);
-  }, [totalSlides]);
-
-  const goToSlide = useCallback((slideIndex) => {
-    setCurrentSlide(slideIndex);
-  }, []);
-
-  // Touch event handlers for swipe detection
-  const onTouchStart = useCallback((e) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-    setIsSwiping(true);
-  }, []);
-
-  const onTouchMove = useCallback((e) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  }, []);
-
-  const onTouchEnd = useCallback(() => {
-    if (!touchStart || !touchEnd) {
-      setIsSwiping(false);
-      return;
-    }
-    
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-    
-    if (isLeftSwipe && totalSlides > 1) {
-      nextSlide();
-    } else if (isRightSwipe && totalSlides > 1) {
-      prevSlide();
-    }
-    
-    setIsSwiping(false);
-  }, [touchStart, touchEnd, minSwipeDistance, nextSlide, prevSlide, totalSlides]);
-
-  // Mouse event handlers for hover detection
-  const handleMouseEnter = useCallback(() => {
-    setIsHovering(true);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setIsHovering(false);
-  }, []);
-
-  // Define gradient colors for different skill levels
-  const getProgressGradient = useCallback((level) => {
-    if (level >= 80) {
-      return 'linear-gradient(90deg, var(--primary-color), var(--success-color))';
-    } else if (level >= 60) {
-      return 'linear-gradient(90deg, var(--primary-color), var(--warning-color))';
-    } else {
-      return 'linear-gradient(90deg, var(--primary-color), var(--secondary-color))';
-    }
-  }, []);
-
-  // Calculate and apply consistent heights for all skill cards
-  const calculateAndApplyConsistentHeights = useCallback(() => {
-    const allCards = document.querySelectorAll('.skill-card-equal');
-    if (allCards.length === 0) return;
-
-    // Reset heights first
-    allCards.forEach(card => {
-      card.style.height = 'auto';
-    });
-
-    // Force a reflow
-    void document.body.offsetHeight;
-
-    // Find the maximum height within the current slide only
-    let maxHeight = 0;
-    const currentSlideCards = document.querySelectorAll('.skills-slide.active .skill-card-equal');
-    
-    if (currentSlideCards.length > 0) {
-      currentSlideCards.forEach(card => {
-        const height = card.offsetHeight;
-        if (height > maxHeight) {
-          maxHeight = height;
-        }
-      });
-
-      // Apply the maximum height to all cards in current slide
-      if (maxHeight > 0) {
-        currentSlideCards.forEach(card => {
-          card.style.height = `${maxHeight}px`;
-        });
-      }
-    }
-  }, []);
-
-  // Update active slide class for CSS targeting
+  // Check if mobile on mount and resize
   useEffect(() => {
-    const slides = document.querySelectorAll('.skills-slide');
-    slides.forEach((slide, index) => {
-      if (index === currentSlide) {
-        slide.classList.add('active');
-      } else {
-        slide.classList.remove('active');
-      }
-    });
-    
-    const timer = setTimeout(calculateAndApplyConsistentHeights, 100);
-    return () => clearTimeout(timer);
-  }, [currentSlide, calculateAndApplyConsistentHeights]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      calculateAndApplyConsistentHeights();
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
     };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [calculateAndApplyConsistentHeights]);
-
-  // Auto-advance slides with hover interruption
-  useEffect(() => {
-    if (!skillsInView || totalSlides <= 1 || isHovering || isSwiping) return;
     
-    autoAdvanceRef.current = setInterval(() => {
-      nextSlide();
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Calculate donut chart values
+  const calculateDonutValues = useCallback((level) => {
+    const radius = 40;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (level / 100) * circumference;
+    return { radius, circumference, offset };
+  }, []);
+
+  // Generate glow effect color
+  const getGlowColor = useCallback((level, index) => {
+    const hue = (index * 137.5) % 360;
+    return `hsla(${hue}, 80%, 60%, 0.6)`;
+  }, []);
+
+  // Track which skills have been animated
+  useEffect(() => {
+    if (skillsInView) {
+      const timer = setTimeout(() => {
+        setAnimatedSkills(skills.map(skill => skill.id || skill.name));
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [skillsInView]);
+
+  // Smart slide grouping
+  const getOptimalSlides = useCallback(() => {
+    const skillsPerSlideDesktop = 12;
+    const skillsPerSlideMobile = 9; // 3 columns × 3 rows = 9 skills per slide
+    
+    const skillsPerSlide = isMobile ? skillsPerSlideMobile : skillsPerSlideDesktop;
+    const slides = [];
+    
+    let currentIndex = 0;
+    while (currentIndex < skills.length) {
+      const remainingSkills = skills.length - currentIndex;
+      
+      if (remainingSkills < skillsPerSlide && remainingSkills > 0) {
+        if (remainingSkills <= skillsPerSlide / 2 && slides.length > 0) {
+          const lastSlide = slides[slides.length - 1];
+          const remainingItems = skills.slice(currentIndex);
+          
+          const maxReasonableItems = skillsPerSlide * 1.5;
+          if (lastSlide.length + remainingItems.length <= maxReasonableItems) {
+            slides[slides.length - 1] = [...lastSlide, ...remainingItems];
+            break;
+          }
+        }
+      }
+      
+      const slideSkills = skills.slice(currentIndex, currentIndex + skillsPerSlide);
+      slides.push(slideSkills);
+      currentIndex += skillsPerSlide;
+    }
+    
+    return { slides };
+  }, [isMobile]);
+
+  const { slides: skillSlides } = getOptimalSlides();
+  const totalSlides = skillSlides.length;
+  const currentSkills = skillSlides[currentSlide] || [];
+
+  // Auto-advance slides
+  useEffect(() => {
+    if (!autoPlay || !skillsInView || totalSlides <= 1) return;
+
+    const interval = setInterval(() => {
+      setDirection(1);
+      setCurrentSlide((prev) => (prev + 1) % totalSlides);
     }, 5000);
 
-    return () => {
-      if (autoAdvanceRef.current) {
-        clearInterval(autoAdvanceRef.current);
-        autoAdvanceRef.current = null;
-      }
-    };
-  }, [skillsInView, nextSlide, totalSlides, isHovering, isSwiping]);
+    return () => clearInterval(interval);
+  }, [autoPlay, skillsInView, totalSlides]);
 
-  // Clean up interval on unmount
-  useEffect(() => {
-    return () => {
-      if (autoAdvanceRef.current) {
-        clearInterval(autoAdvanceRef.current);
-        autoAdvanceRef.current = null;
-      }
-    };
-  }, []);
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (!skillsInView || totalSlides <= 1) return;
+  // Mobile-only swipe gestures
+  const bind = useDrag(
+    ({ swipe: [swipeX], last, first }) => {
+      if (totalSlides <= 1) return;
       
-      if (e.key === 'ArrowLeft') {
-        prevSlide();
-      } else if (e.key === 'ArrowRight') {
-        nextSlide();
+      if (first) {
+        setAutoPlay(false);
       }
-    };
+      
+      if (last) {
+        // Re-enable autoplay after 3 seconds
+        setTimeout(() => setAutoPlay(true), 3000);
+        
+        // Handle swipe
+        if (swipeX !== 0) {
+          const dir = swipeX > 0 ? -1 : 1;
+          setDirection(dir);
+          
+          // Add haptic feedback if available
+          if ('vibrate' in navigator) {
+            navigator.vibrate(10);
+          }
+          
+          setCurrentSlide((prev) => {
+            const nextSlide = prev + dir;
+            if (nextSlide < 0) return totalSlides - 1;
+            if (nextSlide >= totalSlides) return 0;
+            return nextSlide;
+          });
+        }
+      }
+    },
+    {
+      enabled: isMobile, // Only enable on mobile
+      filterTaps: true,
+      axis: 'x',
+      swipe: {
+        duration: 500,
+        distance: 50
+      }
+    }
+  );
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [skillsInView, prevSlide, nextSlide, totalSlides]);
+  const nextSlide = () => {
+    setDirection(1);
+    setCurrentSlide((prev) => (prev + 1) % totalSlides);
+  };
 
-  // Render skill card component
-  const renderSkillCard = useCallback((skill, index, globalIndex) => (
-    <div 
-      key={globalIndex} 
-      className={`skill-card-equal ${skillsInView ? 'skill-animate-in' : ''}`}
-      style={{ animationDelay: `${index * 0.15}s` }}
-    >
-      <div className="skill-card-content">
-        <div className="skill-header-equal">
-          <div className="skill-name-container-equal">
+  const prevSlide = () => {
+    setDirection(-1);
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+  };
+
+  // Simplified animation variants
+  const slideVariants = {
+    enter: (direction) => ({
+      x: direction > 0 ? 300 : -300,
+      opacity: 0
+    }),
+    center: {
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction) => ({
+      x: direction > 0 ? -300 : 300,
+      opacity: 0
+    })
+  };
+
+  // Render individual donut chart
+  const renderDonutChart = useCallback((skill, index) => {
+    const { circumference, offset } = calculateDonutValues(skill.level);
+    const gradientId = `skill-gradient-${skill.id || skill.name.replace(/\s+/g, '-')}`;
+    const isAnimated = animatedSkills.includes(skill.id || skill.name);
+    const animationDelay = `${index * 150}ms`;
+
+    return (
+      <motion.div 
+        key={skill.id || skill.name}
+        className="skill-donut-item"
+        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ 
+          duration: 0.6, 
+          delay: index * 0.1,
+          ease: [0.22, 0.61, 0.36, 1]
+        }}
+        whileHover={{ 
+          scale: 1.05,
+          y: -8,
+          transition: { duration: 0.3 }
+        }}
+      >
+        <div className="donut-chart-container">
+          <svg 
+            className="donut-chart-svg"
+            width="140" 
+            height="140" 
+            viewBox="0 0 140 140"
+          >
+            <defs>
+              <linearGradient 
+                id={gradientId} 
+                x1="0%" 
+                y1="0%" 
+                x2="100%" 
+                y2="100%"
+              >
+                <stop offset="0%" stopColor={`hsl(${(index * 137.5) % 360}, 80%, 55%)`} />
+                <stop offset="50%" stopColor={`hsl(${(index * 137.5 + 30) % 360}, 90%, 45%)`} />
+                <stop offset="100%" stopColor={`hsl(${(index * 137.5 + 60) % 360}, 85%, 50%)`} />
+              </linearGradient>
+            </defs>
+            
+            {/* Background circle */}
+            <circle
+              cx="70"
+              cy="70"
+              r="40"
+              fill="none"
+              stroke="var(--donut-bg)"
+              strokeWidth="12"
+              className="donut-background"
+            />
+            
+            {/* Progress circle with gradient */}
+            <circle
+              cx="70"
+              cy="70"
+              r="40"
+              fill="none"
+              stroke={`url(#${gradientId})`}
+              strokeWidth="12"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={isAnimated ? offset : circumference}
+              transform="rotate(-90 70 70)"
+              className="donut-progress"
+              style={{
+                transition: `stroke-dashoffset 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) ${animationDelay}`,
+                filter: isAnimated ? `drop-shadow(0 0 8px ${getGlowColor(skill.level, index)})` : 'none'
+              }}
+            />
+            
+            {/* Pulsing effect circle */}
+            <circle
+              cx="70"
+              cy="70"
+              r="40"
+              fill="none"
+              stroke={`url(#${gradientId})`}
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={isAnimated ? offset : circumference}
+              transform="rotate(-90 70 70)"
+              className="donut-pulse"
+              style={{
+                transition: `stroke-dashoffset 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) ${animationDelay}`,
+                animationDelay: isAnimated ? `${index * 150 + 1800}ms` : '0ms'
+              }}
+            />
+          </svg>
+          
+          {/* Center content */}
+          <div className="donut-center-content">
             {skill.icon && (
-              <img 
+              <motion.img 
                 src={skill.icon} 
-                alt={`${skill.name} icon`}
-                className="skill-icon-equal"
+                alt=""
+                className="donut-icon"
                 loading="lazy"
+                whileHover={{ scale: 1.2, rotate: 5 }}
+                transition={{ duration: 0.3 }}
               />
             )}
-            <span className="skill-name-equal">{skill.name}</span>
-          </div>
-          <span className="skill-percentage-equal">{skill.level}%</span>
-        </div>
-        
-        <div className="skill-progress-container-equal">
-          <div className="skill-progress-bar-equal">
-            <div 
-              className={`skill-progress-fill-equal ${skillsInView ? 'skill-animate-width' : ''}`}
-              style={{ 
-                width: skillsInView ? `${skill.level}%` : '0%',
-                background: getProgressGradient(skill.level),
-                transitionDelay: `${index * 0.15 + 0.3}s`
-              }}
-            ></div>
+            <motion.span 
+              className="donut-percentage"
+              animate={isAnimated ? { scale: [1, 1.1, 1] } : {}}
+              transition={{ duration: 0.3, delay: index * 0.15 + 1.8 }}
+            >
+              {isAnimated ? skill.level : 0}%
+            </motion.span>
           </div>
         </div>
         
-        <div className="skill-level-indicator-equal">
-          <div className="skill-level-dots-equal">
-            {[1, 2, 3, 4, 5].map((dot) => (
-              <div 
-                key={dot}
-                className={`skill-level-dot-equal ${skill.level >= dot * 20 ? 'active' : ''}`}
-              ></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  ), [skillsInView, getProgressGradient]);
+        {/* Skill name */}
+        <motion.div 
+          className="skill-name"
+          whileHover={{ color: 'var(--primary-color)', y: 2 }}
+          transition={{ duration: 0.3 }}
+        >
+          {skill.name}
+        </motion.div>
+      </motion.div>
+    );
+  }, [animatedSkills, calculateDonutValues, getGlowColor]);
 
   return (
     <section 
       id="skills" 
       ref={ref}
       className="skills-section"
+      onMouseEnter={() => !isMobile && setAutoPlay(false)}
+      onMouseLeave={() => !isMobile && setAutoPlay(true)}
     >
       <div className="skills-container">
         <h2 className="skills-section-title">Technical Skills</h2>
         
-        <div 
-          className="skills-slider-container"
-          ref={sliderContainerRef}
-        >
-          {totalSlides > 1 && (
+        <div className="skills-carousel">
+          {/* Navigation buttons - desktop only */}
+          {totalSlides > 1 && !isMobile && (
             <>
               <button 
-                className="skills-slider-arrow skills-slider-arrow-prev"
+                className="carousel-nav-btn carousel-nav-prev"
                 onClick={prevSlide}
                 aria-label="Previous skills"
-                disabled={currentSlide === 0}
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-                </svg>
+                ‹
               </button>
               
               <button 
-                className="skills-slider-arrow skills-slider-arrow-next"
+                className="carousel-nav-btn carousel-nav-next"
                 onClick={nextSlide}
                 aria-label="Next skills"
-                disabled={currentSlide === totalSlides - 1}
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-                </svg>
+                ›
               </button>
             </>
           )}
-
+          
           <div 
-            className="skills-slider-wrapper"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
+            className={`skills-carousel-track ${isMobile ? 'swipeable' : ''}`}
+            {...(isMobile ? bind() : {})}
           >
-            <div 
-              ref={sliderTrackRef}
-              className="skills-slider-track"
-              style={{ 
-                transform: `translateX(-${currentSlide * 100}%)`,
-                transition: isSwiping ? 'none' : 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
-              }}
-            >
-              {Array.from({ length: totalSlides }).map((_, slideIndex) => (
-                <div 
-                  key={slideIndex}
-                  className={`skills-slide ${slideIndex === currentSlide ? 'active' : ''}`}
-                >
-                  <div className="skills-grid-2x2">
-                    {skills
-                      .slice(
-                        slideIndex * skillsPerSlide,
-                        slideIndex * skillsPerSlide + skillsPerSlide
-                      )
-                      .map((skill, index) => {
-                        const globalIndex = slideIndex * skillsPerSlide + index;
-                        return renderSkillCard(skill, index, globalIndex);
-                      })}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={currentSlide}
+                className="skills-donut-grid"
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: "spring", stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 }
+                }}
+              >
+                {currentSkills.map((skill, index) => renderDonutChart(skill, index))}
+              </motion.div>
+            </AnimatePresence>
           </div>
-
+          
+          {/* Swipe hint for mobile */}
+          {isMobile && totalSlides > 1 && (
+            <div className="swipe-hint-container">
+              <div className="swipe-hint">
+                <span className="swipe-arrow">←</span>
+                Swipe to explore
+                <span className="swipe-arrow">→</span>
+              </div>
+            </div>
+          )}
+          
+          {/* Carousel indicators */}
           {totalSlides > 1 && (
-            <div className="skills-slider-indicators-container">
-              <div className="skills-slider-indicators">
-                {Array.from({ length: totalSlides }).map((_, index) => (
+            <div className="skills-carousel-controls">
+              <div className="carousel-indicators">
+                {Array.from({ length: totalSlides }, (_, i) => (
                   <button
-                    key={index}
-                    className={`skills-slider-indicator ${index === currentSlide ? 'active' : ''}`}
-                    onClick={() => goToSlide(index)}
-                    aria-label={`Go to skills slide ${index + 1}`}
+                    key={i}
+                    className={`carousel-indicator ${i === currentSlide ? 'active' : ''}`}
+                    onClick={() => {
+                      const newDirection = i > currentSlide ? 1 : -1;
+                      setDirection(newDirection);
+                      setCurrentSlide(i);
+                    }}
+                    aria-label={`Go to slide ${i + 1}`}
                   />
                 ))}
               </div>

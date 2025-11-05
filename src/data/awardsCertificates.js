@@ -86,8 +86,8 @@ export const awardsCertificates = [
     pdf: `${BASE_URL}/assets/certificates/AmlCtfFundamentals.pdf`,
     verifyUrl: "https://amlctftrainings.thinkific.com/certificates/w4ow90yo9f",
     credentialId: "w4ow90yo9f",
-    description: "Award for exceptional user interface and experience design in web applications, recognizing innovative design solutions and user-centered approach.",
-    tags: ["UI/UX", "Design", "User Experience", "Web Design", "User Interface"]
+    description: "Certification covering fundamental principles of Anti-Money Laundering and Counter-Terrorist Financing, including regulatory frameworks, risk assessment, and compliance requirements.",
+    tags: ["AML", "CTF", "Compliance", "Financial Crime", "Regulatory", "Risk Assessment"]
   },
   {
     id: 7,
@@ -100,7 +100,7 @@ export const awardsCertificates = [
     pdf: `${BASE_URL}/assets/certificates/ARRG.pdf`,
     verifyUrl: "https://amlctftrainings.thinkific.com/certificates/3czjfaquis",
     credentialId: "3czjfaquis",
-    description: "Professional certification demonstrating expertise in developing, deploying, and managing applications on Google Cloud Platform using cloud-native technologies.",
-    tags: ["Google Cloud", "Cloud", "Development", "GCP", "Cloud Native", "DevOps"]
+    description: "Certification covering AMLC registration requirements and reporting obligations for covered institutions, including transaction reporting, suspicious transaction reporting, and compliance procedures.",
+    tags: ["AML", "Reporting", "Compliance", "Registration", "Financial Regulation", "Transaction Monitoring"]
   }
 ];
