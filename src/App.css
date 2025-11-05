@@ -23,6 +23,18 @@
   --chip-text: #4a5568;
   --tag-bg: #edf2f7;
   --tag-text: #4a5568;
+  
+  /* Section-specific background colors */
+  --skills-bg: #f7fafc;
+  --projects-bg: #ffffff;
+  --awards-bg: #f8fafc;
+  --contact-bg: #edf2f7;
+  
+  /* Section text colors */
+  --skills-text: #333333;
+  --projects-text: #333333;
+  --awards-text: #333333;
+  --contact-text: #333333;
 }
 
 .dark-mode {
@@ -39,6 +51,18 @@
   --chip-text: #e2e8f0;
   --tag-bg: #4a5568;
   --tag-text: #e2e8f0;
+  
+  /* Section-specific background colors for dark mode */
+  --skills-bg: #2d3748;
+  --projects-bg: #1a202c;
+  --awards-bg: #2d3748;
+  --contact-bg: #1a202c;
+  
+  /* Section text colors for dark mode */
+  --skills-text: #e2e8f0;
+  --projects-text: #e2e8f0;
+  --awards-text: #e2e8f0;
+  --contact-text: #e2e8f0;
 }
 
 body {
@@ -76,6 +100,35 @@ body {
   width: 60px;
   height: 3px;
   background: var(--primary-color);
+}
+
+/* Section Styling */
+.skills-section {
+  background-color: var(--skills-bg);
+  color: var(--skills-text);
+  padding: 80px 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.projects-section {
+  background-color: var(--projects-bg);
+  color: var(--projects-text);
+  padding: 80px 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.awards-section {
+  background-color: var(--awards-bg);
+  color: var(--awards-text);
+  padding: 80px 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.contact-section {
+  background-color: var(--contact-bg);
+  color: var(--contact-text);
+  padding: 80px 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Theme Switch - Only in Hero Section */
@@ -231,6 +284,13 @@ input:checked + .slider .moon {
   .section-title {
     font-size: 2rem;
   }
+  
+  .skills-section,
+  .projects-section,
+  .awards-section,
+  .contact-section {
+    padding: 60px 0;
+  }
 }
 
 @media (max-width: 480px) {
@@ -240,5 +300,12 @@ input:checked + .slider .moon {
   
   .container {
     padding: 0 15px;
+  }
+  
+  .skills-section,
+  .projects-section,
+  .awards-section,
+  .contact-section {
+    padding: 50px 0;
   }
 }

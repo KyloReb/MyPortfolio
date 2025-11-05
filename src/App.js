@@ -6,6 +6,7 @@ import './App.css';
 import Hero from './components/Hero/Hero';
 import Skills from './components/Skills/Skills';
 import Projects from './components/Projects/Projects';
+import AwardsCertificates from './components/AwardsCertificates/AwardsCertificates'; // Add this import
 import Contact from './components/Contact/Contact';
 
 // Hooks
@@ -19,6 +20,7 @@ function App() {
       <Hero darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       <Skills />
       <Projects />
+      <AwardsCertificates /> {/* Add this line */}
       <Contact />
     </div>
   );
