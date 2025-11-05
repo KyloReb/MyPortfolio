@@ -77,6 +77,20 @@ export const awardsCertificates = [
   },
   {
     id: 6,
+    title: "Python Essentials 2",
+    issuer: "Cisco Networking Academy",
+    date: "November 2025",
+    expirationDate: "No Expiration",
+    type: "certificate",
+    image: `${BASE_URL}/assets/certificates/python-essentials-2.png`,
+    pdf: `${BASE_URL}/assets/certificates/PythonEssentials2.pdf`,
+    verifyUrl: "https://www.credly.com/badges/5765a0df-57b1-40a4-8a39-ebe62297e9b8/public_url",
+    credentialId: "57741027-32d1-4881-b31f-2150d3774ea6",
+    description: "Advanced Python programming covering object-oriented programming, data structures, exception handling, file operations, and modular programming. Builds upon Python Essentials 1 with intermediate concepts and practical applications.",
+    tags: ["Python", "Object-Oriented Programming", "Data Structures", "Exception Handling", "File Operations", "Cisco", "Advanced Python"]
+  },
+  {
+    id: 7,
     title: "AML/CTF Fundamentals",
     issuer: "Anti-Money Laundering Council of the Philippines",
     date: "July 2024",
@@ -90,7 +104,7 @@ export const awardsCertificates = [
     tags: ["AML", "CTF", "Compliance", "Financial Crime", "Regulatory", "Risk Assessment"]
   },
   {
-    id: 7,
+    id: 8,
     title: "AMLC Registration and Reporting Guidelines (ARRG)",
     issuer: "Anti-Money Laundering Council of the Philippines",
     date: "July 2024",
