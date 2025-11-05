@@ -1,5 +1,5 @@
-// AwardsCertificates.js - Refactored with separate modal
-import React, { useState, useCallback, useMemo } from 'react';
+// AwardsCertificates.js - Updated mobile layout with 3 items per row
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { awardsCertificates } from '../../data/awardsCertificates';
 import AwardsModal from './Modal';
 import './AwardsCertificates.css';
@@ -7,13 +7,92 @@ import './AwardsCertificates.css';
 const AwardsCertificates = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [filter, setFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('date');
   const [imageLoaded, setImageLoaded] = useState({});
+  const [visibleItems, setVisibleItems] = useState(9); // Show multiples of 3 for mobile
+  const [isInView, setIsInView] = useState(false);
+  const sectionRef = useRef(null);
+  const gridRef = useRef(null);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
 
-  // Filter items based on selection
-  const filteredItems = useMemo(() => {
-    if (filter === 'all') return awardsCertificates;
-    return awardsCertificates.filter(item => item.type === filter);
-  }, [filter]);
+  // Intersection Observer for scroll animation
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
+  // Filter and sort items
+  const filteredAndSortedItems = useMemo(() => {
+    let items = awardsCertificates;
+    
+    if (filter !== 'all') {
+      items = items.filter(item => item.type === filter);
+    }
+    
+    if (sortBy === 'alphabetical') {
+      items = [...items].sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sortBy === 'date') {
+      items = [...items].sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+    
+    return items;
+  }, [filter, sortBy]);
+
+  // Lazy loaded items
+  const displayedItems = useMemo(() => {
+    return filteredAndSortedItems.slice(0, visibleItems);
+  }, [filteredAndSortedItems, visibleItems]);
+
+  // Handle scroll for lazy loading
+  const handleScroll = useCallback(() => {
+    if (!gridRef.current) return;
+    
+    const { scrollLeft, scrollWidth, clientWidth } = gridRef.current;
+    if (scrollLeft + clientWidth >= scrollWidth - 100 && visibleItems < filteredAndSortedItems.length) {
+      setVisibleItems(prev => Math.min(prev + 6, filteredAndSortedItems.length));
+    }
+  }, [visibleItems, filteredAndSortedItems.length]);
+
+  // Touch handlers for mobile swipe
+  const handleTouchStart = useCallback((e) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchMove = useCallback((e) => {
+    touchEndX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    
+    const diff = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 50;
+    
+    if (Math.abs(diff) > minSwipeDistance) {
+      // Optional: Add swipe navigation between items
+      console.log('Swipe detected:', diff > 0 ? 'left' : 'right');
+    }
+    
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  }, []);
 
   // Handle image load
   const handleImageLoad = useCallback((id) => {
@@ -47,7 +126,7 @@ const AwardsCertificates = () => {
 
   // Handle PDF view
   const handleViewPDF = useCallback((pdfUrl, e) => {
-    e.stopPropagation();
+    e?.stopPropagation();
     if (pdfUrl) {
       window.open(pdfUrl, '_blank', 'noopener,noreferrer');
     }
@@ -55,64 +134,114 @@ const AwardsCertificates = () => {
 
   // Handle verification URL
   const handleVerify = useCallback((verifyUrl, e) => {
-    e.stopPropagation();
+    e?.stopPropagation();
     if (verifyUrl) {
       window.open(verifyUrl, '_blank', 'noopener,noreferrer');
     }
   }, []);
 
+  // Reset visible items when filter/sort changes
+  useEffect(() => {
+    setVisibleItems(9); // Reset to multiple of 3
+  }, [filter, sortBy]);
+
   return (
-    <section id="awards-certificates" className="awards-certificates-section">
+    <section 
+      id="awards-certificates" 
+      className="awards-certificates-section"
+      ref={sectionRef}
+    >
       <div className="container">
-        <h2 className="section-title">
+        <h2 className={`section-title ${isInView ? 'animate-in' : ''}`}>
           Awards & Certificates
         </h2>
-        <p className="section-subtitle">
+        <p className={`section-subtitle ${isInView ? 'animate-in' : ''}`}>
           Recognition and certifications that showcase my expertise and achievements
         </p>
 
-        {/* Filter Buttons */}
-        <div className="filter-container">
-          <FilterButton
-            type="all"
-            label="All"
-            active={filter === 'all'}
-            onClick={setFilter}
-          />
-          <FilterButton
-            type="award"
-            label="🏆 Awards"
-            active={filter === 'award'}
-            onClick={setFilter}
-          />
-          <FilterButton
-            type="certificate"
-            label="📜 Certificates"
-            active={filter === 'certificate'}
-            onClick={setFilter}
-          />
+        {/* Filter and Sort Controls */}
+        <div className={`controls-container ${isInView ? 'animate-in' : ''}`}>
+          <div className="filter-container">
+            <FilterButton
+              type="all"
+              label="All"
+              active={filter === 'all'}
+              onClick={setFilter}
+            />
+            <FilterButton
+              type="award"
+              label="🏆 Awards"
+              active={filter === 'award'}
+              onClick={setFilter}
+            />
+            <FilterButton
+              type="certificate"
+              label="📜 Certificates"
+              active={filter === 'certificate'}
+              onClick={setFilter}
+            />
+          </div>
+
+          <div className="sort-container">
+            <label htmlFor="sort-select" className="sort-label">Sort by:</label>
+            <select 
+              id="sort-select"
+              className="sort-select"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="date">Date (Newest)</option>
+              <option value="alphabetical">Alphabetical</option>
+            </select>
+          </div>
         </div>
 
-        {/* Items Grid */}
-        <div className="items-grid">
-          {filteredItems.map((item) => (
+        {/* Items Grid with Horizontal Scroll on Mobile */}
+        <div 
+          className={`items-grid ${isInView ? 'animate-in' : ''}`}
+          ref={gridRef}
+          onScroll={handleScroll}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          {displayedItems.map((item, index) => (
             <ItemCard 
               key={item.id} 
               item={item}
+              index={index}
               onItemClick={handleItemClick}
               onKeyDown={handleKeyDown}
               imageLoaded={imageLoaded[item.id]}
               onImageLoad={handleImageLoad}
+              isInView={isInView}
             />
           ))}
         </div>
 
+        {/* Load More Button */}
+        {visibleItems < filteredAndSortedItems.length && (
+          <div className="load-more-container">
+            <button 
+              className="load-more-btn"
+              onClick={() => setVisibleItems(prev => Math.min(prev + 9, filteredAndSortedItems.length))}
+            >
+              Load More ({filteredAndSortedItems.length - visibleItems} remaining)
+            </button>
+          </div>
+        )}
+
         {/* Empty State */}
-        {filteredItems.length === 0 && (
+        {filteredAndSortedItems.length === 0 && (
           <div className="empty-state">
             <p>No {filter === 'all' ? 'items' : filter + 's'} found.</p>
           </div>
         )}
+
+        {/* Mobile Scroll Indicator */}
+        <div className="mobile-scroll-indicator">
+          <span>← Swipe to view more →</span>
+        </div>
       </div>
 
       {/* Modal */}
@@ -142,7 +271,7 @@ const FilterButton = React.memo(({ type, label, active, onClick }) => (
   </button>
 ));
 
-// Image Component
+// Image Component with Lazy Loading
 const ImageComponent = React.memo(({ item, isModal = false, imageLoaded, onImageLoad }) => (
   <div className={`image-wrapper ${isModal ? 'modal-image-wrapper' : 'card-image-wrapper'}`}>
     {!imageLoaded && (
@@ -180,7 +309,7 @@ const ExternalLinkIcon = React.memo(({ className = '' }) => (
 ));
 
 // Award/Certificate Card Component
-const ItemCard = React.memo(({ item, onItemClick, onKeyDown, imageLoaded, onImageLoad }) => {
+const ItemCard = React.memo(({ item, onItemClick, onKeyDown, imageLoaded, onImageLoad, isInView, index }) => {
   const handleClick = () => {
     onItemClick(item);
   };
@@ -191,7 +320,8 @@ const ItemCard = React.memo(({ item, onItemClick, onKeyDown, imageLoaded, onImag
 
   return (
     <div 
-      className="item-card"
+      className={`item-card ${isInView ? 'animate-in' : ''}`}
+      style={{ animationDelay: `${index * 0.1}s` }}
       onClick={handleClick}
       onKeyDown={handleKeyPress}
       role="button"

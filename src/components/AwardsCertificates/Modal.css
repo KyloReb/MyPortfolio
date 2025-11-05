@@ -123,10 +123,16 @@
 
 .modal-issuer,
 .modal-date,
+.modal-expiration,
 .modal-credential-id {
     color: var(--text-secondary, #6c757d);
     margin: 0;
     font-size: 0.85rem;
+}
+
+.modal-expiration {
+    color: var(--warning-color, #eab308);
+    font-weight: 500;
 }
 
 .modal-credential-id {

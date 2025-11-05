@@ -129,6 +129,9 @@ const AwardsModal = React.memo(({
               <p className="modal-date">
                 <strong>Date:</strong> {item.date}
               </p>
+              <p className="modal-expiration">
+                <strong>Expiration:</strong> {item.expirationDate}
+              </p>
               {item.credentialId && (
                 <p className="modal-credential-id">
                   <strong>Credential ID:</strong> {item.credentialId}
