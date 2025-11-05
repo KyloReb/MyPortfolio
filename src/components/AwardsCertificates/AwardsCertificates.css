@@ -260,6 +260,11 @@
     max-height: 2.6em; /* Fallback for browsers that don't support line-clamp */
 }
 
+/* Desktop Content - Hidden on Mobile */
+.desktop-content {
+    display: block;
+}
+
 /* Skeleton Loading */
 .image-skeleton {
     position: absolute;
@@ -272,7 +277,7 @@
     animation: loading 1.5s infinite;
 }
 
-/* Badges - ADJUSTED FOR MOBILE */
+/* Badges - UPDATED FOR MOBILE ICON */
 .item-type-badge {
     position: absolute;
     top: 0.5rem;
@@ -288,6 +293,25 @@
     max-width: calc(100% - 1rem);
     word-wrap: break-word;
     border: 1px solid var(--badge-border, rgba(0, 0, 0, 0.1));
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Type Icon Component */
+.type-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.badge-text {
+    display: inline;
+}
+
+.badge-icon {
+    display: none;
 }
 
 .item-content {
@@ -410,7 +434,7 @@
     --secondary-color: #764ba2;
     --tag-bg: #e9ecef;
     --skeleton-bg: #f0f0f0;
-    --skeleton-shimmer: #e0e0e0;
+    --skeleton-shimmer: #e0e0f0;
     --primary-dark: #5a6fd8;
     --badge-bg: rgba(255, 255, 255, 0.95);
     --badge-text: #333;
@@ -468,6 +492,33 @@
         -moz-line-clamp: 2;
         line-clamp: 2;
         max-height: 2.4em;
+    }
+
+    /* Hide issuer, date, and tags on mobile */
+    .desktop-content {
+        display: none;
+    }
+
+    /* MOBILE BADGE STYLES - Icon only */
+    .item-type-badge {
+        padding: 0.4rem;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: auto;
+    }
+
+    .badge-text {
+        display: none; /* Hide text on mobile */
+    }
+
+    .badge-icon {
+        display: flex; /* Show only icon on mobile */
+        font-size: 1rem;
+        margin: 0;
     }
 
     .item-issuer {
@@ -564,6 +615,28 @@
     .item-title {
         font-size: 1rem;
         max-height: 3em;
+    }
+
+    /* Show desktop content on tablet and above */
+    .desktop-content {
+        display: block;
+    }
+
+    /* Tablet badge styles - show full text */
+    .badge-text {
+        display: inline;
+    }
+
+    .badge-icon {
+        display: none;
+    }
+
+    .item-type-badge {
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+        width: auto;
+        height: auto;
+        min-width: auto;
     }
 }
 

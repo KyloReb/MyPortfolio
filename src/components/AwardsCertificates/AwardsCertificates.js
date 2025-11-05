@@ -308,6 +308,13 @@ const ExternalLinkIcon = React.memo(({ className = '' }) => (
   </svg>
 ));
 
+// Type Icon Component for Mobile
+const TypeIcon = React.memo(({ type, className = '' }) => (
+  <div className={`type-icon ${type} ${className}`} aria-label={type === 'award' ? 'Award' : 'Certificate'}>
+    {type === 'award' ? '🏆' : '📜'}
+  </div>
+));
+
 // Award/Certificate Card Component
 const ItemCard = React.memo(({ item, onItemClick, onKeyDown, imageLoaded, onImageLoad, isInView, index }) => {
   const handleClick = () => {
@@ -335,8 +342,10 @@ const ItemCard = React.memo(({ item, onItemClick, onKeyDown, imageLoaded, onImag
           imageLoaded={imageLoaded}
           onImageLoad={onImageLoad}
         />
+        {/* Mobile Type Icon - Only icon on mobile, full badge on desktop */}
         <div className="item-type-badge">
-          {item.type === 'award' ? '🏆 Award' : '📜 Certificate'}
+          <span className="badge-text">{item.type === 'award' ? '🏆 Award' : '📜 Certificate'}</span>
+          <TypeIcon type={item.type} className="badge-icon" />
         </div>
       </div>
       
@@ -347,13 +356,17 @@ const ItemCard = React.memo(({ item, onItemClick, onKeyDown, imageLoaded, onImag
             <ExternalLinkIcon className="item-title-icon" />
           )}
         </div>
-        <p className="item-issuer">{item.issuer}</p>
-        <p className="item-date">{item.date}</p>
         
-        <div className="item-tags">
-          {item.tags.map((tag, index) => (
-            <span key={index} className="item-tag">{tag}</span>
-          ))}
+        {/* Desktop-only content */}
+        <div className="desktop-content">
+          <p className="item-issuer">{item.issuer}</p>
+          <p className="item-date">{item.date}</p>
+          
+          <div className="item-tags">
+            {item.tags.map((tag, index) => (
+              <span key={index} className="item-tag">{tag}</span>
+            ))}
+          </div>
         </div>
       </div>
     </div>
