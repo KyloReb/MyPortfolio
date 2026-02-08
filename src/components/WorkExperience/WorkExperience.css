@@ -144,6 +144,14 @@
   opacity: 0.9;
 }
 
+.experience-details {
+  overflow: hidden;
+  transition: max-height 0.4s ease-out, opacity 0.4s ease-out, margin-top 0.4s ease;
+  max-height: 1000px;
+  /* Arbitrary large value for desktop */
+  opacity: 1;
+}
+
 .experience-tags {
   display: flex;
   flex-wrap: wrap;
@@ -157,6 +165,40 @@
   color: var(--tag-text);
   border-radius: 15px;
   font-weight: 500;
+}
+
+.experience-date-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.experience-toggle-icon {
+  font-size: 0.8rem;
+  color: var(--primary-color);
+  transition: transform 0.3s ease;
+}
+
+.experience-toggle-icon.expanded {
+  transform: rotate(180deg);
+}
+
+/* Interactive State - Global */
+.experience-card.interactive {
+  cursor: pointer;
+}
+
+.experience-card.interactive .experience-details {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+}
+
+.experience-card.interactive.expanded .experience-details {
+  max-height: 500px;
+  /* Adjust based on content */
+  opacity: 1;
+  margin-top: 15px;
 }
 
 /* Responsive Design */
