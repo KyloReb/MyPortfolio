@@ -21,7 +21,10 @@ const Navbar = ({ darkMode }) => {
 
   const navItems = [
     { id: 'home', label: 'Home' },
+    { id: 'experience', label: 'Experience' },
+    { id: 'skills', label: 'Skills' },
     { id: 'projects', label: 'Projects' },
+    { id: 'awards-certificates', label: 'Awards' },
     { id: 'contact', label: 'Contact' }
   ];
 
@@ -35,7 +38,7 @@ const Navbar = ({ darkMode }) => {
       {isMobile ? (
         // Mobile hamburger menu - aligned to left
         <div className="mobile-nav">
-          <button 
+          <button
             className={`menu-button ${isMenuOpen ? 'open' : ''}`}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle menu"
@@ -44,7 +47,7 @@ const Navbar = ({ darkMode }) => {
             <span></span>
             <span></span>
           </button>
-          
+
           {isMenuOpen && (
             <div className="mobile-menu">
               {navItems.map((item) => (

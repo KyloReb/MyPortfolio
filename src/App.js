@@ -4,9 +4,10 @@ import './App.css';
 
 // Components
 import Hero from './components/Hero/Hero';
+import WorkExperience from './components/WorkExperience/WorkExperience';
 import Skills from './components/Skills/Skills';
 import Projects from './components/Projects/Projects';
-import AwardsCertificates from './components/AwardsCertificates/AwardsCertificates'; // Add this import
+import AwardsCertificates from './components/AwardsCertificates/AwardsCertificates';
 import Contact from './components/Contact/Contact';
 
 // Hooks
@@ -18,6 +19,7 @@ function App() {
   return (
     <div className={`App ${darkMode ? 'dark-mode' : ''}`}>
       <Hero darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      <WorkExperience />
       <Skills />
       <Projects />
       <AwardsCertificates /> {/* Add this line */}
