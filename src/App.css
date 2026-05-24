@@ -9,26 +9,30 @@
 :root {
   --bg-color: #ffffff;
   --text-color: #333333;
-  --section-bg: #f7fafc;
+  --section-bg: #faf5f0;
   --card-bg: #ffffff;
-  --border-color: #e2e8f0;
-  --primary-color: #4299e1;
-  --secondary-color: #667eea;
+  --border-color: #e0d4ca;
+  --primary-color: #6e2632;
+  --secondary-color: #2a5235;
+  --accent-color: #2a5235;
+  --accent-glow: rgba(110, 38, 50, 0.08);
+  --secondary-glow: rgba(42, 82, 53, 0.08);
+  --donut-bg: #e0d4ca;
   --shadow-color: rgba(0, 0, 0, 0.1);
-  --skill-bg: #e2e8f0;
-  --hero-bg-light: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  --hero-bg-dark: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-  --dark-bg: #0f1419;
-  --chip-bg: #e2e8f0;
-  --chip-text: #4a5568;
-  --tag-bg: #edf2f7;
-  --tag-text: #4a5568;
+  --skill-bg: #e0d4ca;
+  --hero-bg-light: linear-gradient(135deg, #faf5f0 0%, #f0e8e2 100%);
+  --hero-bg-dark: linear-gradient(135deg, #141414 0%, #1a1a1a 100%);
+  --dark-bg: #0d0d0d;
+  --chip-bg: #ede5de;
+  --chip-text: #3a2e2e;
+  --tag-bg: #ede5de;
+  --tag-text: #3a2e2e;
   
   /* Section-specific background colors */
-  --skills-bg: #f7fafc;
+  --skills-bg: #faf5f0;
   --projects-bg: #ffffff;
-  --awards-bg: #f8fafc;
-  --contact-bg: #edf2f7;
+  --awards-bg: #faf5f0;
+  --contact-bg: #f5eee8;
   
   /* Section text colors */
   --skills-text: #333333;
@@ -38,31 +42,36 @@
 }
 
 .dark-mode {
-  --bg-color: #1a202c;
-  --text-color: #e2e8f0;
-  --section-bg: #2d3748;
-  --card-bg: #2d3748;
-  --border-color: #4a5568;
-  --primary-color: #63b3ed;
-  --secondary-color: #7f9cf5;
-  --shadow-color: rgba(0, 0, 0, 0.3);
-  --skill-bg: #4a5568;
-  --chip-bg: #4a5568;
-  --chip-text: #e2e8f0;
-  --tag-bg: #4a5568;
-  --tag-text: #e2e8f0;
+  --bg-color: #0d0d0d;
+  --text-color: #e8e8e8;
+  --section-bg: #141414;
+  --card-bg: #1a1a1a;
+  --border-color: #2a2a2a;
+  --primary-color: #9a3a48;
+  --secondary-color: #4a7a52;
+  --accent-color: #4a7a52;
+  --accent-glow: rgba(154, 58, 72, 0.1);
+  --secondary-glow: rgba(74, 122, 82, 0.08);
+  --donut-bg: #2a2a2a;
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --skill-bg: #2a2a2a;
+  --hero-bg-dark: linear-gradient(135deg, #0d0d0d 0%, #141414 100%);
+  --chip-bg: #2a2a2a;
+  --chip-text: #e8e8e8;
+  --tag-bg: #2a2a2a;
+  --tag-text: #e8e8e8;
   
   /* Section-specific background colors for dark mode */
-  --skills-bg: #2d3748;
-  --projects-bg: #1a202c;
-  --awards-bg: #2d3748;
-  --contact-bg: #1a202c;
+  --skills-bg: #141414;
+  --projects-bg: #0d0d0d;
+  --awards-bg: #141414;
+  --contact-bg: #0d0d0d;
   
   /* Section text colors for dark mode */
-  --skills-text: #e2e8f0;
-  --projects-text: #e2e8f0;
-  --awards-text: #e2e8f0;
-  --contact-text: #e2e8f0;
+  --skills-text: #e8e8e8;
+  --projects-text: #e8e8e8;
+  --awards-text: #e8e8e8;
+  --contact-text: #e8e8e8;
 }
 
 body {

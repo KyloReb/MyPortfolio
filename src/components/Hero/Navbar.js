@@ -1,7 +1,15 @@
-// Navbar.js
 import React, { useState, useEffect } from 'react';
 import { useScrollToSection } from '../../hooks/useScrollToSection';
 import './Navbar.css';
+
+const NAV_ITEMS = [
+  { id: 'home', label: 'Home' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'awards-certificates', label: 'Awards' },
+  { id: 'contact', label: 'Contact' },
+];
 
 const Navbar = ({ darkMode }) => {
   const scrollToSection = useScrollToSection();
@@ -9,24 +17,11 @@ const Navbar = ({ darkMode }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    const checkScreenSize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
+    const checkScreenSize = () => setIsMobile(window.innerWidth <= 768);
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
-
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
-
-  const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'experience', label: 'Experience' },
-    { id: 'skills', label: 'Skills' },
-    { id: 'projects', label: 'Projects' },
-    { id: 'awards-certificates', label: 'Awards' },
-    { id: 'contact', label: 'Contact' }
-  ];
 
   const handleNavClick = (sectionId) => {
     scrollToSection(sectionId);
@@ -36,21 +31,20 @@ const Navbar = ({ darkMode }) => {
   return (
     <nav className={`navbar ${darkMode ? 'dark-mode' : ''}`}>
       {isMobile ? (
-        // Mobile hamburger menu - aligned to left
         <div className="mobile-nav">
           <button
             className={`menu-button ${isMenuOpen ? 'open' : ''}`}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => setIsMenuOpen((prev) => !prev)}
             aria-label="Toggle menu"
           >
-            <span></span>
-            <span></span>
-            <span></span>
+            <span />
+            <span />
+            <span />
           </button>
 
           {isMenuOpen && (
             <div className="mobile-menu">
-              {navItems.map((item) => (
+              {NAV_ITEMS.map((item) => (
                 <button
                   key={item.id}
                   className="mobile-nav-item"
@@ -63,9 +57,8 @@ const Navbar = ({ darkMode }) => {
           )}
         </div>
       ) : (
-        // Desktop pill navbar - centered
         <div className="pill-nav">
-          {navItems.map((item) => (
+          {NAV_ITEMS.map((item) => (
             <button
               key={item.id}
               className="nav-pill"

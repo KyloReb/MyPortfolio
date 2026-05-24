@@ -1,3 +1,11 @@
+/*
+ * Hero.css — Full-screen hero with glass texture, typing effect, skill chips
+ */
+
+/* ==========================================================================
+   Section Base
+   ========================================================================== */
+
 .hero-section {
   min-height: 100vh;
   background: var(--hero-bg-light);
@@ -6,7 +14,7 @@
   justify-content: space-between;
   align-items: center;
   color: var(--text-color);
-  padding: 80px 10px 30px; /* Reduced side padding for more width utilization */
+  padding: 80px 10px 30px;
   position: relative;
   transition: background 0.3s ease;
   overflow: hidden;
@@ -18,79 +26,24 @@
   color: white;
 }
 
-/* Enhanced Interactive Background Elements */
-.hero-mouse-follower {
-  position: absolute;
-  width: 150px; /* Larger for better visibility */
-  height: 150px;
-  background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
-  opacity: 0.05;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  transition: all 0.2s ease;
-  transform: translate(-50%, -50%);
-  filter: blur(25px); /* More blur for softer effect */
-  mix-blend-mode: multiply; /* Better blending with background */
-}
+/* ==========================================================================
+   Glass background circles
+   ========================================================================== */
 
-.dark-mode .hero-mouse-follower {
-  background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
-  opacity: 0.1;
-  mix-blend-mode: screen;
-}
-
-.hero-highlight {
-  position: absolute;
-  background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
-  opacity: 0;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  animation: highlightPulse 5s ease-in-out forwards;
-  filter: blur(20px); /* Enhanced blur */
-  mix-blend-mode: multiply; /* Better visibility */
-}
-
-.dark-mode .hero-highlight {
-  background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
-  mix-blend-mode: screen;
-}
-
-@keyframes highlightPulse {
-  0% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-  20% {
-    opacity: var(--highlight-opacity, 0.08);
-    transform: scale(1);
-  }
-  70% {
-    opacity: calc(var(--highlight-opacity, 0.08) * 0.7);
-    transform: scale(1.1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.3);
-  }
-}
-
-/* Enhanced Static Background Elements */
 .hero-section::before {
   content: '';
   position: absolute;
   top: -30%;
   right: -15%;
-  width: 600px; /* Larger elements */
+  width: 600px;
   height: 600px;
   border-radius: 50%;
   background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
-  opacity: 0.08; /* Increased opacity */
+  opacity: 0.08;
   z-index: 0;
-  animation: float 25s ease-in-out infinite;
   filter: blur(40px);
   mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
 .dark-mode .hero-section::before {
@@ -107,11 +60,11 @@
   height: 500px;
   border-radius: 50%;
   background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
-  opacity: 0.06; /* Increased opacity */
+  opacity: 0.06;
   z-index: 0;
-  animation: float 20s ease-in-out infinite reverse;
   filter: blur(35px);
   mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
 .dark-mode .hero-section::after {
@@ -119,15 +72,16 @@
   mix-blend-mode: screen;
 }
 
+/* Additional static glass circles */
 .hero-bg-element {
   position: absolute;
   border-radius: 50%;
   background: radial-gradient(circle, var(--secondary-color) 0%, transparent 70%);
-  opacity: 0.05; /* Increased opacity */
+  opacity: 0.05;
   z-index: 0;
-  animation: float 30s ease-in-out infinite;
   filter: blur(30px);
   mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
 .dark-mode .hero-bg-element {
@@ -135,48 +89,260 @@
   mix-blend-mode: screen;
 }
 
-.hero-bg-1 {
-  top: 15%;
-  right: 8%;
-  width: 350px;
-  height: 350px;
-  animation-delay: -3s;
+.hero-bg-1 { top: 15%; right: 8%; width: 350px; height: 350px; }
+.hero-bg-2 { bottom: 35%; left: 15%; width: 250px; height: 250px; }
+.hero-bg-3 { top: 60%; left: 5%; width: 200px; height: 200px; }
+
+/* Bring content above background circles */
+.hero-content > * {
+  position: relative;
+  z-index: 1;
 }
 
-.hero-bg-2 {
-  bottom: 35%;
-  left: 15%;
-  width: 250px;
-  height: 250px;
-  animation-delay: -8s;
+/* ==========================================================================
+   Layout containers
+   ========================================================================== */
+
+.hero-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+  flex-grow: 1;
+  padding-bottom: 15px;
+  box-sizing: border-box;
 }
 
-.hero-bg-3 {
-  top: 60%;
-  left: 5%;
-  width: 200px;
-  height: 200px;
-  animation-delay: -12s;
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg) scale(1);
-  }
-  33% {
-    transform: translateY(-30px) rotate(120deg) scale(1.05);
-  }
-  66% {
-    transform: translateY(15px) rotate(240deg) scale(0.95);
-  }
+.hero-image-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
-/* Skills Highlights Section */
+/* ==========================================================================
+   Profile Image with greeting overlay
+   ========================================================================== */
+
+.hero-image-container {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+  max-width: 360px;
+  width: 100%;
+}
+
+.profile-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.hero-image-container:hover .profile-image {
+  transform: scale(1.04);
+}
+
+.hero-greeting-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2.5rem 1rem 1rem;
+  text-align: center;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Greeting + Typing name (base — reused in overlay)
+   ========================================================================== */
+
+.hi-text {
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--primary-color);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: 2px;
+  animation: bounceIn 0.8s ease-out;
+  position: relative;
+}
+
+.hi-text::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+  border-radius: 2px;
+  animation: expandWidth 0.8s ease-out 0.5s both;
+}
+
+.typing-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+}
+
+.typed-text {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--text-color);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.cursor {
+  font-size: 3rem;
+  font-weight: 300;
+  color: var(--primary-color);
+  margin-left: 2px;
+  opacity: 1;
+  transition: opacity 0.1s ease;
+}
+
+.cursor.visible {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Greeting overlay overrides (must come after base styles to win)
+   ========================================================================== */
+
+.hero-greeting-overlay .hi-text {
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7), 0 4px 20px rgba(0, 0, 0, 0.4);
+  font-size: 3rem;
+  font-weight: 800;
+  animation: none;
+  position: static;
+}
+
+.hero-greeting-overlay .hi-text::after {
+  display: none;
+}
+
+.hero-greeting-overlay .typed-text {
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7), 0 4px 20px rgba(0, 0, 0, 0.4);
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.hero-greeting-overlay .cursor {
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7), 0 4px 20px rgba(0, 0, 0, 0.4);
+  font-size: 2.2rem;
+  font-weight: 300;
+  margin-left: 2px;
+}
+
+/* ==========================================================================
+   Intro text
+   ========================================================================== */
+
+.hero-intro {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+  animation: fadeInUp 1s ease 0.3s both;
+  font-weight: 400;
+  width: 100%;
+  max-width: 1000px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+/* ==========================================================================
+   Resume button (chip style)
+   ========================================================================== */
+
+.resume-chip-button {
+  background: var(--chip-bg);
+  color: var(--chip-text);
+  padding: 0.8rem 1.8rem;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  margin: 0 auto 2rem;
+  animation: fadeInUp 1s ease 0.5s both;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: auto;
+  white-space: nowrap;
+}
+
+.resume-chip-button.dark-mode {
+  background: white;
+  color: #1a1a1a;
+  border-color: white;
+}
+
+/* Shine sweep */
+.resume-chip-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+  z-index: -1;
+}
+
+.resume-chip-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px var(--shadow-color);
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.resume-chip-button.dark-mode:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.resume-chip-button:hover::before {
+  left: 100%;
+}
+
+.resume-chip-button:active {
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Skill highlights
+   ========================================================================== */
+
 .skills-highlights-section {
   margin: 2rem 0;
   animation: fadeInUp 1s ease 0.7s both;
   width: 100%;
-  max-width: 1100px; /* Increased max-width for better utilization */
 }
 
 .skills-highlights-title {
@@ -226,7 +392,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   transition: left 0.6s ease;
   z-index: -1;
 }
@@ -235,185 +401,17 @@
   left: 100%;
 }
 
-@keyframes skillSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px) rotateX(45deg);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) rotateX(0);
-  }
-}
-
-.hero-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
-  text-align: center;
-  flex-grow: 1;
-  padding-bottom: 15px;
-  box-sizing: border-box;
-}
-
-.hero-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  max-width: 1200px;
-  width: 100%;
-  animation: fadeInUp 1s ease;
-  padding: 0 15px;
-  box-sizing: border-box;
-}
-
-/* Enhanced Greeting Section - HI beside name */
-.hero-greeting {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-  position: relative;
-  width: 100%;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.hi-text {
-  font-size: 4rem;
-  font-weight: 900;
-  color: var(--primary-color);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-  letter-spacing: 2px;
-  animation: bounceIn 0.8s ease-out;
-  position: relative;
-}
-
-.hi-text::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-  border-radius: 2px;
-  animation: expandWidth 0.8s ease-out 0.5s both;
-}
-
-.typing-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 60px;
-  font-size: 3rem;
-  font-weight: 700;
+.skills-more-indicator {
+  font-size: 0.9rem;
   color: var(--text-color);
-  position: relative;
+  opacity: 0.7;
+  margin-top: 0.5rem;
+  animation: fadeInUp 1s ease 0.8s both;
 }
 
-.typed-text {
-  font-size: 3rem;
-  font-weight: 700;
-  color: var(--text-color);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.cursor {
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--primary-color);
-  margin-left: 2px;
-  opacity: 1;
-  transition: opacity 0.1s ease;
-}
-
-.cursor.visible {
-  opacity: 1;
-}
-
-.hero-intro {
-  font-size: 1.1rem;
-  line-height: 1.7;
-  opacity: 0.9;
-  margin-bottom: 2rem;
-  animation: fadeInUp 1s ease 0.3s both;
-  max-width: 1000px;
-  font-weight: 400;
-  width: 100%;
-  padding: 0 10px;
-  box-sizing: border-box;
-}
-
-/* Resume Button - Chip Style */
-.resume-chip-button {
-  background: var(--chip-bg);
-  color: var(--chip-text);
-  padding: 0.8rem 1.8rem;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  border: 1px solid var(--border-color);
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-  margin: 0 auto 2rem;
-  animation: fadeInUp 1s ease 0.5s both;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: auto;
-  white-space: nowrap;
-}
-
-.resume-chip-button.dark-mode {
-  background: white;
-  color: #1a1a1a;
-  border-color: white;
-}
-
-.resume-chip-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s ease;
-  z-index: -1;
-}
-
-.resume-chip-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px var(--shadow-color);
-  background: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-}
-
-/* Dark mode hover state */
-.resume-chip-button.dark-mode:hover {
-  background: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-}
-
-.resume-chip-button:hover::before {
-  left: 100%;
-}
-
-.resume-chip-button:active {
-  transform: translateY(-1px);
-}
+/* ==========================================================================
+   Scroll indicator
+   ========================================================================== */
 
 .scroll-indicator {
   text-align: center;
@@ -449,59 +447,10 @@
   animation: bounce 2s infinite;
 }
 
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-8px);
-  }
-  60% {
-    transform: translateY(-4px);
-  }
-}
+/* ==========================================================================
+   Theme toggle (fixed position)
+   ========================================================================== */
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes bounceIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.3) translateY(-20px);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.05) translateY(5px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-@keyframes expandWidth {
-  from {
-    width: 0;
-  }
-  to {
-    width: 80px;
-  }
-}
-
-.hero-content > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* Fixed Theme Toggle */
 .theme-toggle-container {
   position: absolute;
   top: 25px;
@@ -530,7 +479,7 @@
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 34px;
   display: flex;
   align-items: center;
@@ -539,15 +488,15 @@
   box-sizing: border-box;
 }
 
-.slider:before {
+.slider::before {
   position: absolute;
-  content: "";
+  content: '';
   height: 26px;
   width: 26px;
   left: 4px;
   bottom: 4px;
   background-color: white;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 50%;
   z-index: 2;
 }
@@ -556,249 +505,210 @@ input:checked + .slider {
   background-color: #2196F3;
 }
 
-input:checked + .slider:before {
+input:checked + .slider::before {
   transform: translateX(26px);
 }
 
-.slider .sun, .slider .moon {
+.slider .sun,
+.slider .moon {
   font-size: 14px;
   transition: opacity 0.3s ease;
   z-index: 1;
   line-height: 1;
 }
 
-.slider .sun {
-  opacity: 1;
+.slider .sun  { opacity: 1; }
+.slider .moon { opacity: 0; }
+input:checked + .slider .sun  { opacity: 0; }
+input:checked + .slider .moon { opacity: 1; }
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40%  { transform: translateY(-8px); }
+  60%  { transform: translateY(-4px); }
 }
 
-.slider .moon {
-  opacity: 0;
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-input:checked + .slider .sun {
-  opacity: 0;
+@keyframes bounceIn {
+  0%   { opacity: 0; transform: scale(0.3) translateY(-20px); }
+  50%  { opacity: 0.7; transform: scale(1.05) translateY(5px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-input:checked + .slider .moon {
-  opacity: 1;
+@keyframes expandWidth {
+  from { width: 0; }
+  to   { width: 80px; }
 }
 
-.skills-more-indicator {
-  font-size: 0.9rem;
-  color: var(--text-color);
-  opacity: 0.7;
-  margin-top: 0.5rem;
-  animation: fadeInUp 1s ease 0.8s both;
+@keyframes skillSlideIn {
+  from { opacity: 0; transform: translateY(20px) rotateX(45deg); }
+  to   { opacity: 1; transform: translateY(0) rotateX(0); }
 }
 
-/* Mobile First Approach - Base styles for mobile */
+/* ==========================================================================
+   Resume Modal
+   ========================================================================== */
+
+.resume-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.resume-modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  height: 90vh;
+  max-height: 800px;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+}
+
+.dark-mode .resume-modal-content {
+  background: #1a1a1a;
+}
+
+.resume-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.resume-modal-close:hover {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.resume-modal-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+@media (max-width: 768px) {
+  .resume-modal-overlay {
+    padding: 0.5rem;
+  }
+  .resume-modal-content {
+    max-width: 100%;
+    height: 95vh;
+    border-radius: 12px;
+  }
+}
+
+/* ==========================================================================
+   Responsive: Tablet & below (768px-)
+   ========================================================================== */
+
 @media (max-width: 768px) {
   .hero-section {
-    padding: 70px 8px 20px; /* Further reduced side padding */
+    padding: 70px 8px 20px;
     justify-content: space-between;
   }
-  
-  .hero-container {
-    padding-bottom: 10px;
-  }
-  
-  .hero-content {
-    padding: 0 8px;
-  }
-  
-  .hero-greeting {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .hi-text {
-    font-size: 3rem;
-    margin-bottom: 0;
-  }
-  
-  .hi-text::after {
-    width: 60px;
-  }
-  
-  .typing-container {
-    font-size: 2.2rem;
-    min-height: 50px;
-  }
-  
-  .typed-text {
-    font-size: 2.2rem;
-  }
-  
-  .cursor {
-    font-size: 2.2rem;
-  }
-  
-  .hero-intro {
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
-    padding: 0 5px;
-  }
 
-  /* Resume Button Mobile */
-  .resume-chip-button {
-    padding: 0.7rem 1.6rem;
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .scroll-indicator {
-    padding: 5px 0;
-  }
-  
-  .scroll-button {
-    padding: 5px;
-  }
-  
-  .scroll-arrow {
-    font-size: 1.6rem;
-  }
-  
-  .theme-toggle-container {
-    top: 20px;
-    right: 20px;
-  }
-  
-  .theme-switch {
-    width: 50px;
-    height: 28px;
-  }
-  
-  .slider:before {
-    height: 20px;
-    width: 20px;
-    left: 4px;
-    bottom: 4px;
-  }
-  
-  input:checked + .slider:before {
-    transform: translateX(22px);
-  }
-  
-  .slider .sun, .slider .moon {
-    font-size: 12px;
-  }
-  
-  /* Hide enhanced background effects on mobile for performance */
+  .hero-container { padding-bottom: 10px; }
+  .hero-content { padding: 0 8px; }
+
+  .hero-image-container { max-width: 260px; }
+  .hero-greeting-overlay { padding: 1.5rem 0.8rem 0.8rem; }
+  .hero-greeting-overlay .hi-text { font-size: 2rem; }
+  .hero-greeting-overlay .typed-text { font-size: 1.5rem; }
+  .hero-greeting-overlay .cursor { font-size: 1.5rem; }
+
+  .hero-intro { font-size: 1rem; margin-bottom: 1.5rem; padding: 0 5px; }
+  .resume-chip-button { padding: 0.7rem 1.6rem; font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .scroll-indicator { padding: 5px 0; }
+  .scroll-button { padding: 5px; }
+  .scroll-arrow { font-size: 1.6rem; }
+  .theme-toggle-container { top: 20px; right: 20px; }
+  .theme-switch { width: 50px; height: 28px; }
+  .slider::before { height: 20px; width: 20px; left: 4px; bottom: 4px; }
+  input:checked + .slider::before { transform: translateX(22px); }
+  .slider .sun,
+  .slider .moon { font-size: 12px; }
+
   .hero-section::before,
-  .hero-section::after,
-  .hero-bg-element,
-  .hero-mouse-follower,
-  .hero-highlight {
+  .hero-section::after {
     display: none;
   }
+
+  .skills-highlights-section { margin: 1.5rem 0; max-width: 100%; }
+  .skills-highlights-title { font-size: 1.1rem; margin-bottom: 1rem; }
+  .skills-highlights-container { gap: 0.6rem; padding: 0 5px; }
+  .skill-highlight-item { padding: 0.6rem 1rem; font-size: 0.8rem; }
 }
+
+/* ==========================================================================
+   Responsive: Small mobile (480px-)
+   ========================================================================== */
 
 @media (max-width: 480px) {
-  .hero-section {
-    padding: 70px 5px 15px; /* Minimal side padding */
-  }
-  
-  .hi-text {
-    font-size: 2.5rem;
-  }
-  
-  .hi-text::after {
-    width: 50px;
-  }
-  
-  .typing-container {
-    font-size: 1.8rem;
-    min-height: 45px;
-  }
-  
-  .typed-text {
-    font-size: 1.8rem;
-  }
-  
-  .cursor {
-    font-size: 1.8rem;
-  }
-  
-  .hero-intro {
-    font-size: 0.9rem;
-    margin-bottom: 1.2rem;
-    padding: 0;
-  }
+  .hero-section { padding: 70px 5px 15px; }
 
-  /* Resume Button Small Mobile */
-  .resume-chip-button {
-    padding: 0.65rem 1.4rem;
-    font-size: 0.85rem;
-    margin-bottom: 1.2rem;
-  }
-  
-  .scroll-indicator {
-    padding: 0;
-  }
-  
-  .scroll-arrow {
-    font-size: 1.5rem;
+  .hero-image-container { max-width: 220px; }
+  .hero-greeting-overlay { padding: 1.2rem 0.6rem 0.6rem; }
+  .hero-greeting-overlay .hi-text { font-size: 1.6rem; }
+  .hero-greeting-overlay .typed-text { font-size: 1.2rem; }
+  .hero-greeting-overlay .cursor { font-size: 1.2rem; }
+
+  .hero-intro { font-size: 0.9rem; margin-bottom: 1.2rem; padding: 0; }
+  .resume-chip-button { padding: 0.65rem 1.4rem; font-size: 0.85rem; margin-bottom: 1.2rem; }
+  .scroll-indicator { padding: 0; }
+  .scroll-arrow { font-size: 1.5rem; }
+
+  .skills-highlights-section { margin: 1.2rem 0; }
+  .skills-highlights-title { font-size: 1rem; }
+  .skills-highlights-container { gap: 0.5rem; }
+  .skill-highlight-item { padding: 0.5rem 0.9rem; font-size: 0.75rem; }
+}
+
+/* ==========================================================================
+   Responsive: Desktop (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .profile-image {
+    max-width: 340px;
   }
 }
 
-/* Skills Highlights Mobile Responsive */
-@media (max-width: 768px) {
-  .skills-highlights-section {
-    margin: 1.5rem 0;
-    max-width: 100%;
-  }
-  
-  .skills-highlights-title {
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-  }
-  
-  .skills-highlights-container {
-    gap: 0.6rem;
-    padding: 0 5px;
-  }
-  
-  .skill-highlight-item {
-    padding: 0.6rem 1rem;
-    font-size: 0.8rem;
-  }
-}
+/* ==========================================================================
+   Responsive: Extra large screens (1600px+)
+   ========================================================================== */
 
-@media (max-width: 480px) {
-  .skills-highlights-section {
-    margin: 1.2rem 0;
-  }
-  
-  .skills-highlights-title {
-    font-size: 1rem;
-  }
-  
-  .skills-highlights-container {
-    gap: 0.5rem;
-  }
-  
-  .skill-highlight-item {
-    padding: 0.5rem 0.9rem;
-    font-size: 0.75rem;
-  }
-}
-
-/* Extra large screens */
 @media (min-width: 1600px) {
-  .hero-container {
-    max-width: 1600px;
-  }
-  
-  .hero-content {
-    max-width: 1400px;
-  }
-  
-  .hero-intro {
-    max-width: 1200px;
-  }
-
-  .resume-chip-button {
-    padding: 0.9rem 2rem;
-    font-size: 1rem;
-  }
+  .resume-chip-button { padding: 0.9rem 2rem; font-size: 1rem; }
+  .hero-image-container { max-width: 420px; }
+  .hero-intro { max-width: 1200px; }
+  .hero-greeting-overlay .hi-text { font-size: 3.6rem; }
+  .hero-greeting-overlay .typed-text { font-size: 2.8rem; }
+  .hero-greeting-overlay .cursor { font-size: 2.8rem; }
 }

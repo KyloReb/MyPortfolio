@@ -1,0 +1,288 @@
+.chat-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: chat-fade-in 0.2s ease;
+}
+
+.chat-modal {
+  background: var(--card-bg);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem 1.5rem 1.5rem;
+  position: relative;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-color);
+  animation: chat-slide-up 0.25s ease;
+}
+
+.chat-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--section-bg);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.chat-modal-close:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+.chat-modal-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.chat-modal-header h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0 0 0.3rem;
+}
+
+.chat-modal-header p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.chat-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.chat-form-group input,
+.chat-form-group textarea {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.chat-form-group input:focus,
+.chat-form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 15%, transparent);
+}
+
+.chat-form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.chat-form-group.has-error input,
+.chat-form-group.has-error textarea {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+  animation: cm-shake 0.4s ease;
+}
+
+.chat-form-group.is-valid input,
+.chat-form-group.is-valid textarea {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.form-error-cm {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #ef4444;
+  margin-top: 0.25rem;
+  padding-left: 0.25rem;
+  animation: cm-error-in 0.25s ease;
+}
+
+.dark-mode .form-error-cm {
+  color: #f87171;
+}
+
+@keyframes cm-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+@keyframes cm-error-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-send-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.chat-send-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--primary-color) 35%, transparent);
+}
+
+.chat-send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.chat-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: chat-spin 0.7s linear infinite;
+}
+
+@keyframes chat-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   Chat Modal — Success State
+   ========================================================================== */
+
+.cm-success-state {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 0.5rem;
+}
+
+.cm-success-checkmark svg {
+  display: block;
+}
+
+.cm-sc-circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: cm-draw-circle 0.6s ease-out forwards;
+}
+
+.cm-sc-check {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: cm-draw-check 0.35s ease-out 0.5s forwards;
+}
+
+@keyframes cm-draw-circle {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes cm-draw-check {
+  to { stroke-dashoffset: 0; }
+}
+
+.cm-success-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.cm-success-text {
+  font-size: 0.82rem;
+  color: var(--text-color);
+  opacity: 0.8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.cm-close-btn {
+  padding: 0.55rem 1.2rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cm-success-btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.cm-success-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--primary-color) 30%, transparent);
+}
+
+.cm-close-btn {
+  background: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.cm-close-btn:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   Chat Modal — Animations
+   ========================================================================== */
+
+@keyframes chat-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes chat-slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .chat-modal {
+    padding: 1.5rem 1.25rem 1.25rem;
+    border-radius: 14px;
+  }
+}
