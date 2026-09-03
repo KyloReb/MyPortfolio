@@ -51,7 +51,7 @@ const Hero = ({ darkMode, toggleDarkMode }) => {
     return () => cleanup?.();
   }, [isMobile]);
 
-  const resumeUrl = `${process.env.PUBLIC_URL}/assets/Rebancos_David_Resume.pdf`;
+  const resumeUrl = `${process.env.PUBLIC_URL}/assets/Rebancos_David - Resume(1).pdf`;
 
   return (
     <section id="home" className="hero-section" ref={heroRef}>
